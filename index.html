@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>すすむの実験用ウィンドウ | 下諏訪町人口データ</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --line: #d9e2ec;
+      --text: #1f2937;
+      --sub: #5b6b7a;
+      --accent: #2f5d7e;
+      --accent-2: #5f85a2;
+      --soft: #eaf2f8;
+      --shadow: 0 8px 24px rgba(24, 39, 75, 0.08);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Yu Gothic", "Hiragino Sans", "Meiryo", sans-serif;
+      background: linear-gradient(180deg, #f7f9fc 0%, #eef3f8 100%);
+      color: var(--text);
+    }
+
+    header {
+      background: linear-gradient(135deg, #244863 0%, #3b6f93 100%);
+      color: #fff;
+      padding: 40px 20px 32px;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .header-inner {
+      max-width: 1150px;
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.14);
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 34px;
+      line-height: 1.25;
+    }
+
+    .lead {
+      margin: 0;
+      max-width: 900px;
+      font-size: 16px;
+      line-height: 1.8;
+      color: rgba(255,255,255,0.92);
+    }
+
+    main {
+      max-width: 1150px;
+      margin: 26px auto 0;
+      padding: 0 16px 48px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+
+    .card h2 {
+      margin: 0 0 14px;
+      font-size: 22px;
+      color: var(--accent);
+    }
+
+    .card h3 {
+      margin: 0 0 12px;
+      font-size: 18px;
+      color: var(--accent);
+    }
+
+    .card p {
+      margin: 0 0 12px;
+      line-height: 1.8;
+      color: var(--text);
+    }
+
+    .muted {
+      color: var(--sub);
+      font-size: 14px;
+    }
+
+    .status-box {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: var(--soft);
+      border: 1px solid #d8e6f0;
+      font-size: 14px;
+      color: var(--sub);
+    }
+
+    .feature-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .feature-item {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px 16px;
+      background: #fbfdff;
+    }
+
+    .feature-item strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--accent);
+      font-size: 15px;
+    }
+
+    .chart-card {
+      margin-bottom: 20px;
+    }
+
+    .chart-wrap {
+      position: relative;
+      width: 100%;
+      min-height: 340px;
+    }
+
+    canvas {
+      width: 100% !important;
+      height: 340px !important;
+    }
+
+    .note {
+      margin-top: 12px;
+      font-size: 13px;
+      color: var(--sub);
+      line-height: 1.7;
+    }
+
+    footer {
+      max-width: 1150px;
+      margin: 0 auto 40px;
+      padding: 0 16px;
+    }
+
+    .footer-box {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 18px 20px;
+      color: var(--sub);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 28px;
+      }
+
+      .lead {
+        font-size: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="eyebrow">SUSUMU LABORATORY / SHIMOSUWA DATA PROJECT</div>
+      <h1>すすむの実験用ウィンドウ</h1>
+      <p class="lead">
+        下諏訪町の公開人口データを、CSVで整理し、Web上で見やすく可視化するための試作ページです。
+        町の情報を「読むだけの資料」から「見て考えられるデータ」に変えていくことを目的にしています。
+      </p>
+    </div>
+  </header>
+
+  <main>
+    <section class="grid">
+      <div class="card">
+        <h2>このページの目的</h2>
+        <p>
+          このページは、下諏訪町の人口関連データをGitHub上で管理し、
+          ブラウザからグラフとして見られるようにするための実験ページです。
+        </p>
+        <p>
+          PDFに載っている数字をCSVとして整理し、それをもとに人口の推移、
+          住民基本台帳人口、転入・転出の傾向などを見やすく表示します。
+        </p>
+        <p>
+          将来的には、地区別人口、外国人住民人口、人口集中地区なども含めて、
+          下諏訪町データの小さな可視化ポータルのような形に育てていく想定です。
+        </p>
+        <div class="status-box" id="status">現在の状態：データ読み込み待機中</div>
+      </div>
+
+      <div class="card">
+        <h2>このページで見られるもの</h2>
+        <div class="feature-list">
+          <div class="feature-item">
+            <strong>推計人口の推移</strong>
+            総人口・男性・女性の長期推移を確認できます。
+          </div>
+          <div class="feature-item">
+            <strong>住民基本台帳人口の推移</strong>
+            実務上の人口把握に近い形で、人口と世帯数の変化を見られます。
+          </div>
+          <div class="feature-item">
+            <strong>転入・転出人口の推移</strong>
+            人口の増減の背景として、人の動きの傾向を確認できます。
+          </div>
+          <div class="feature-item">
+            <strong>今後追加予定</strong>
+            地区別人口、外国人住民人口、DIDデータ、年切替、比較表示など。
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card chart-card">
+      <h2>推計人口の推移</h2>
+      <p class="muted">
+        下諏訪町の推計人口の長期推移です。総人口、男性、女性の変化を表示しています。
+      </p>
+      <div class="chart-wrap">
+        <canvas id="estimateChart"></canvas>
+      </div>
+      <div class="note">
+        総人口の変化だけでなく、男女それぞれの推移も重ねて見ることで、人口構成の変化を把握しやすくしています。
+      </div>
+    </section>
+
+    <section class="card chart-card">
+      <h2>住民基本台帳人口の推移</h2>
+      <p class="muted">
+        住民基本台帳ベースの人口と世帯数の推移です。行政実務上の人口把握の感覚に近いデータです。
+      </p>
+      <div class="chart-wrap">
+        <canvas id="registryChart"></canvas>
+      </div>
+      <div class="note">
+        人口だけでなく世帯数も合わせて見ることで、「人は減っても世帯は大きくは減らない」といった変化も読み取れます。
+      </div>
+    </section>
+
+    <section class="card chart-card">
+      <h2>転入・転出人口の推移</h2>
+      <p class="muted">
+        地域別転入転出データの総数を使って、年ごとの人の動きを比較しています。
+      </p>
+      <div class="chart-wrap">
+        <canvas id="migrationChart"></canvas>
+      </div>
+      <div class="note">
+        今後は東京都・神奈川県・山梨県・愛知県などの内訳比較や、転入超過・転出超過の表示も追加できます。
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-box">
+      <strong>出典について</strong><br>
+      このページは、下諏訪町の公開資料をもとに整理したCSVデータを読み込んで表示しています。<br>
+      現在は試作版のため、見せ方・機能・説明文は今後段階的に改善していく前提です。
+    </div>
+  </footer>
+
+  <script>
+    async function loadCSV(path) {
+      const response = await fetch(path);
+      if (!response.ok) {
+        throw new Error(`CSVの読み込みに失敗しました: ${path}`);
+      }
+
+      const text = await response.text();
+      const lines = text.trim().split(/\r?\n/);
+      const headers = lines[0].split(",").map(h => h.trim());
+
+      return lines.slice(1).map(line => {
+        const cols = line.split(",");
+        const obj = {};
+        headers.forEach((header, i) => {
+          obj[header] = (cols[i] || "").trim();
+        });
+        return obj;
+      });
+    }
+
+    function toNumber(value) {
+      return Number(String(value || "").replace(/,/g, ""));
+    }
+
+    async function init() {
+      const status = document.getElementById("status");
+
+      try {
+        const estimateData = await loadCSV("./data/population_estimate_trend.csv");
+        const registryData = await loadCSV("./data/resident_registry_population.csv");
+        const migrationData = await loadCSV("./data/regional_migration.csv");
+
+        status.textContent = "現在の状態：データ読み込み完了";
+
+        new Chart(document.getElementById("estimateChart"), {
+          type: "line",
+          data: {
+            labels: estimateData.map(d => d.year),
+            datasets: [
+              {
+                label: "総人口",
+                data: estimateData.map(d => toNumber(d.total_population)),
+                tension: 0.25
+              },
+              {
+                label: "男性",
+                data: estimateData.map(d => toNumber(d.male)),
+                tension: 0.25
+              },
+              {
+                label: "女性",
+                data: estimateData.map(d => toNumber(d.female)),
+                tension: 0.25
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              title: {
+                display: true,
+                text: "推計人口の長期推移"
+              }
+            }
+          }
+        });
+
+        new Chart(document.getElementById("registryChart"), {
+          type: "line",
+          data: {
+            labels: registryData.map(d => d.year),
+            datasets: [
+              {
+                label: "人口",
+                data: registryData.map(d => toNumber(d.population)),
+                tension: 0.25
+              },
+              {
+                label: "世帯数",
+                data: registryData.map(d => toNumber(d.households)),
+                tension: 0.25
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              title: {
+                display: true,
+                text: "住民基本台帳人口と世帯数の推移"
+              }
+            }
+          }
+        });
+
+        const inData = migrationData.filter(d => d.type === "in");
+        const outData = migrationData.filter(d => d.type === "out");
+
+        new Chart(document.getElementById("migrationChart"), {
+          type: "bar",
+          data: {
+            labels: inData.map(d => d.year),
+            datasets: [
+              {
+                label: "転入",
+                data: inData.map(d => toNumber(d.total))
+              },
+              {
+                label: "転出",
+                data: outData.map(d => toNumber(d.total))
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              title: {
+                display: true,
+                text: "転入・転出人口の推移"
+              }
+            }
+          }
+        });
+
+      } catch (error) {
+        console.error(error);
+        status.textContent = "現在の状態：データ読み込みエラー";
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
