@@ -19,9 +19,7 @@
       --radius: 18px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -160,12 +158,12 @@
     .chart-wrap {
       position: relative;
       width: 100%;
-      min-height: 340px;
+      min-height: 360px;
     }
 
     canvas {
       width: 100% !important;
-      height: 340px !important;
+      height: 360px !important;
     }
 
     .note {
@@ -272,8 +270,7 @@
           公開資料のPDFから数値をCSV化し、人口の推移、転入・転出、外国人住民人口、人口集中地区などを可視化しています。
         </p>
         <p>
-          将来的には、地区別人口比較や増減ランキングなども加えて、
-          町の人口データを多面的に見られるページに育てていく想定です。
+          今回はさらに、各グラフに増減率や比較指標を重ね、2050年までの探索的シミュレーションも追加しています。
         </p>
         <div class="status-box" id="status">現在の状態：データ読み込み待機中</div>
 
@@ -302,23 +299,23 @@
       </div>
 
       <div class="card">
-        <h2>このページで見られるもの</h2>
+        <h2>今回の見方</h2>
         <div class="feature-list">
           <div class="feature-item">
-            <strong>町全体の人口推移</strong>
-            推計人口と住民基本台帳人口の両面から、長期の流れを確認できます。
+            <strong>左軸</strong>
+            基本は実数（人口、世帯数、件数、面積、密度）を表示します。
           </div>
           <div class="feature-item">
-            <strong>人の動き</strong>
-            年ごとの転入・転出総数を見て、人口変化の背景を考えられます。
+            <strong>右軸</strong>
+            増減率（%）や、転入÷転出の倍率など、比較指標を表示します。
           </div>
           <div class="feature-item">
-            <strong>人口の中身</strong>
-            外国人住民人口を通じて、人口構成の変化の一部を見られます。
+            <strong>予測線</strong>
+            2050年までの予測は、最近の傾向をもとにした探索的な試算です。
           </div>
           <div class="feature-item">
-            <strong>都市的なまとまり</strong>
-            DID人口・面積・人口密度から、集住性の変化を追えます。
+            <strong>注意点</strong>
+            このページの予測は公式推計ではなく、試作・比較用です。
           </div>
         </div>
       </div>
@@ -326,57 +323,57 @@
 
     <h2 class="section-title">1. 町全体の人口動向</h2>
     <p class="section-sub">
-      まずは町全体の大きな流れを見るために、推計人口と住民基本台帳人口を並べています。
+      町全体の流れを見るために、推計人口・住民基本台帳人口・転入転出を並べています。
     </p>
 
     <section class="card chart-card">
       <h2>推計人口の推移</h2>
       <p class="muted">
-        下諏訪町の推計人口の長期推移です。総人口、男性、女性の変化を表示しています。
+        総人口を左軸、前年からの増減率を右軸で重ねています。
       </p>
       <div class="chart-wrap">
         <canvas id="estimateChart"></canvas>
       </div>
       <div class="note">
-        総人口だけでなく男女別の推移も重ねて見ることで、人口構成の変化を把握しやすくしています。
+        右軸の増減率は、前年に対してどの程度増減したかを示します。
       </div>
     </section>
 
     <section class="card chart-card">
-      <h2>住民基本台帳人口の推移</h2>
+      <h2>住民基本台帳人口・世帯数の推移</h2>
       <p class="muted">
-        住民基本台帳ベースの人口と世帯数の推移です。人口と世帯数は桁が異なるため、左右の別軸で表示しています。
+        人口と世帯数を左軸、人口の増減率を右軸に重ねています。
       </p>
       <div class="chart-wrap">
         <canvas id="registryChart"></canvas>
       </div>
       <div class="note">
-        2012年前後の見え方には制度変更の影響が含まれる可能性があります。必要に応じて注記を追加していくのが自然です。
+        世帯数と人口は規模が違いますが、同じ左軸で推移の方向性を見せ、右軸で人口増減率を補助表示しています。
       </div>
     </section>
 
     <section class="card chart-card">
       <h2>転入・転出人口の推移</h2>
       <p class="muted">
-        地域別転入転出データをもとに、年ごとの転入・転出総数を表示しています。
+        転入・転出の件数を左軸、転入÷転出の倍率を右軸で表示しています。
       </p>
       <div class="chart-wrap">
         <canvas id="migrationChart"></canvas>
       </div>
       <div class="note">
-        今後は東京都・神奈川県・山梨県・愛知県などの内訳比較や、転入超過・転出超過の表示も追加できます。
+        倍率が1.00を超えると転入超過寄り、1.00を下回ると転出超過寄りとして見られます。
       </div>
     </section>
 
     <h2 class="section-title">2. 人口構成の変化</h2>
     <p class="section-sub">
-      町全体の人数だけでなく、人口の中身や構成の変化も見られるようにしています。
+      人口の総数だけでなく、中身の変化も確認できるようにしています。
     </p>
 
     <section class="card chart-card">
       <h2>外国人住民人口の推移</h2>
       <p class="muted">
-        外国人住民人口を国籍区分ごとに積み上げ表示しています。総数だけでなく構成の変化も確認できます。
+        国籍区分の積み上げ棒と、総数の増減率を重ねています。
       </p>
       <div class="chart-wrap">
         <canvas id="foreignChart"></canvas>
@@ -388,14 +385,14 @@
 
     <h2 class="section-title">3. 都市的なまとまりの変化</h2>
     <p class="section-sub">
-      DID（人口集中地区）の推移を見ることで、町の集住性や都市的なまとまりがどう変わったかを追えます。
+      DID（人口集中地区）の人口・密度・面積を通じて、集住構造の変化を見ています。
     </p>
 
     <section class="grid-2-equal">
       <div class="card chart-card">
         <h2>DID人口の推移</h2>
         <p class="muted">
-          人口集中地区に含まれる人口の推移です。
+          DID人口を左軸、前回調査からの増減率を右軸に表示しています。
         </p>
         <div class="chart-wrap">
           <canvas id="didPopulationChart"></canvas>
@@ -405,7 +402,7 @@
       <div class="card chart-card">
         <h2>DID人口密度の推移</h2>
         <p class="muted">
-          DID内の人口密度の推移です。都市的な集中の強さを見るための指標です。
+          DID人口密度を左軸、増減率を右軸に表示しています。
         </p>
         <div class="chart-wrap">
           <canvas id="didDensityChart"></canvas>
@@ -416,13 +413,31 @@
     <section class="card chart-card">
       <h2>DID面積の推移</h2>
       <p class="muted">
-        DIDの面積の変化です。面積と人口密度を合わせて見ることで、集住構造の変化を考えやすくなります。
+        DID面積を左軸、増減率を右軸に表示しています。
       </p>
       <div class="chart-wrap">
         <canvas id="didAreaChart"></canvas>
       </div>
       <div class="note">
-        DIDは国勢調査ベースの指標なので、毎年ではなく調査年ごとの点として並びます。
+        DIDは国勢調査ベースなので、毎年ではなく調査年ごとの変化です。
+      </div>
+    </section>
+
+    <h2 class="section-title">4. 2050年までの探索的シミュレーション</h2>
+    <p class="section-sub">
+      直近の傾向を使った単純な線形回帰で、2050年までの試算を行っています。正式な将来推計ではありません。
+    </p>
+
+    <section class="card chart-card">
+      <h2>人口の2050年までの試算</h2>
+      <p class="muted">
+        推計人口と住民基本台帳人口について、最近10点の傾向から2050年まで外挿しています。
+      </p>
+      <div class="chart-wrap">
+        <canvas id="forecastChart"></canvas>
+      </div>
+      <div class="note">
+        試算はあくまで「最近の傾向が続いたらどう見えるか」を確認するためのものです。政策や制度変更、移動要因は反映していません。
       </div>
     </section>
   </main>
@@ -431,8 +446,8 @@
     <div class="footer-box">
       <strong>出典について</strong><br>
       このページは、下諏訪町の公開資料をもとに整理したCSVデータを読み込んで表示しています。<br>
-      現在は試作版のため、見せ方・機能・説明文は今後段階的に改善していく前提です。<br>
-      次の段階では、地区別人口比較や増減ランキングを追加するのが自然です。
+      予測は探索的な統計試算であり、公式推計ではありません。<br>
+      次の段階では、地区別人口の増減ランキングや比較UIを足すのが自然です。
     </div>
   </footer>
 
@@ -442,7 +457,6 @@
       if (!response.ok) {
         throw new Error(`CSVの読み込みに失敗しました: ${path}`);
       }
-
       const text = await response.text();
       const lines = text.trim().split(/\r?\n/);
       const headers = lines[0].split(",").map(h => h.trim());
@@ -467,6 +481,78 @@
       return toNumber(value).toLocaleString("ja-JP");
     }
 
+    function calcRateSeries(values) {
+      return values.map((v, i) => {
+        if (i === 0) return null;
+        const prev = values[i - 1];
+        if (!prev) return null;
+        return ((v - prev) / prev) * 100;
+      });
+    }
+
+    function calcRatioSeries(numerator, denominator) {
+      return numerator.map((v, i) => {
+        const d = denominator[i];
+        if (!d) return null;
+        return v / d;
+      });
+    }
+
+    function linearRegression(xs, ys) {
+      const n = xs.length;
+      const sumX = xs.reduce((a, b) => a + b, 0);
+      const sumY = ys.reduce((a, b) => a + b, 0);
+      const sumXY = xs.reduce((acc, x, i) => acc + x * ys[i], 0);
+      const sumXX = xs.reduce((acc, x) => acc + x * x, 0);
+
+      const denominator = n * sumXX - sumX * sumX;
+      if (denominator === 0) {
+        return { slope: 0, intercept: ys[ys.length - 1] || 0 };
+      }
+
+      const slope = (n * sumXY - sumX * sumY) / denominator;
+      const intercept = (sumY - slope * sumX) / n;
+      return { slope, intercept };
+    }
+
+    function buildForecast(data, valueKey, startForecastYear = null, endYear = 2050, lastN = 10) {
+      const actualYears = data.map(d => toNumber(d.year));
+      const actualValues = data.map(d => toNumber(d[valueKey]));
+
+      const usableYears = actualYears.slice(-lastN);
+      const usableValues = actualValues.slice(-lastN);
+
+      const model = linearRegression(usableYears, usableValues);
+
+      const actualLastYear = actualYears[actualYears.length - 1];
+      const forecastStart = startForecastYear || actualLastYear + 1;
+
+      const forecastYears = [];
+      const forecastValues = [];
+
+      for (let y = forecastStart; y <= endYear; y++) {
+        forecastYears.push(y);
+        forecastValues.push(model.slope * y + model.intercept);
+      }
+
+      return {
+        actualYears,
+        actualValues,
+        forecastYears,
+        forecastValues
+      };
+    }
+
+    function mergeYearLabels(a, b) {
+      const set = new Set([...a, ...b]);
+      return Array.from(set).sort((x, y) => x - y);
+    }
+
+    function createNullPaddedSeries(labels, years, values) {
+      const map = new Map(years.map((y, i) => [y, values[i]]));
+      return labels.map(y => map.has(y) ? map.get(y) : null);
+    }
+
     async function init() {
       const status = document.getElementById("status");
 
@@ -477,9 +563,9 @@
         const foreignData = await loadCSV("./data/foreign_resident_population.csv");
         const didData = await loadCSV("./data/did_population.csv");
 
-        status.textContent = `現在の状態：データ読み込み完了（推計人口 ${estimateData.length}件 / 住民基本台帳 ${registryData.length}件 / 転入転出 ${migrationData.length}件 / 外国人住民 ${foreignData.length}件 / DID ${didData.length}件）`;
+        status.textContent =
+          `現在の状態：データ読み込み完了（推計人口 ${estimateData.length}件 / 住民基本台帳 ${registryData.length}件 / 転入転出 ${migrationData.length}件 / 外国人住民 ${foreignData.length}件 / DID ${didData.length}件）`;
 
-        // KPI
         const lastEstimate = estimateData[estimateData.length - 1];
         const lastRegistry = registryData[registryData.length - 1];
         const lastForeign = foreignData[foreignData.length - 1];
@@ -497,26 +583,42 @@
         document.getElementById("kpi-did-pop").textContent = fmtNumber(lastDid.did_population);
         document.getElementById("kpi-did-year").textContent = `${lastDid.year}年`;
 
-        // 1. 推計人口
+        // 1) 推計人口
+        const estYears = estimateData.map(d => d.year);
+        const estTotal = estimateData.map(d => toNumber(d.total_population));
+        const estMale = estimateData.map(d => toNumber(d.male));
+        const estFemale = estimateData.map(d => toNumber(d.female));
+        const estRate = calcRateSeries(estTotal);
+
         new Chart(document.getElementById("estimateChart"), {
           type: "line",
           data: {
-            labels: estimateData.map(d => d.year),
+            labels: estYears,
             datasets: [
               {
                 label: "総人口",
-                data: estimateData.map(d => toNumber(d.total_population)),
-                tension: 0.25
+                data: estTotal,
+                tension: 0.25,
+                yAxisID: "y"
               },
               {
                 label: "男性",
-                data: estimateData.map(d => toNumber(d.male)),
-                tension: 0.25
+                data: estMale,
+                tension: 0.25,
+                yAxisID: "y"
               },
               {
                 label: "女性",
-                data: estimateData.map(d => toNumber(d.female)),
-                tension: 0.25
+                data: estFemale,
+                tension: 0.25,
+                yAxisID: "y"
+              },
+              {
+                label: "増減率 (%)",
+                data: estRate,
+                tension: 0.25,
+                yAxisID: "yRate",
+                borderDash: [6, 4]
               }
             ]
           },
@@ -525,35 +627,51 @@
             maintainAspectRatio: false,
             scales: {
               y: {
-                beginAtZero: false
+                beginAtZero: false,
+                title: { display: true, text: "人口" }
+              },
+              yRate: {
+                position: "right",
+                beginAtZero: false,
+                grid: { drawOnChartArea: false },
+                title: { display: true, text: "増減率 (%)" }
               }
             },
             plugins: {
-              title: {
-                display: true,
-                text: "推計人口の長期推移"
-              }
+              title: { display: true, text: "推計人口の長期推移" }
             }
           }
         });
 
-        // 2. 住民基本台帳人口
+        // 2) 住民基本台帳人口
+        const regYears = registryData.map(d => d.year);
+        const regPopulation = registryData.map(d => toNumber(d.total_population));
+        const regHouseholds = registryData.map(d => toNumber(d.households));
+        const regRate = calcRateSeries(regPopulation);
+
         new Chart(document.getElementById("registryChart"), {
           type: "line",
           data: {
-            labels: registryData.map(d => d.year),
+            labels: regYears,
             datasets: [
               {
                 label: "人口",
-                data: registryData.map(d => toNumber(d.total_population)),
+                data: regPopulation,
                 tension: 0.25,
-                yAxisID: "yPopulation"
+                yAxisID: "y"
               },
               {
                 label: "世帯数",
-                data: registryData.map(d => toNumber(d.households)),
+                data: regHouseholds,
                 tension: 0.25,
-                yAxisID: "yHouseholds"
+                yAxisID: "y"
+              },
+              {
+                label: "人口増減率 (%)",
+                data: regRate,
+                tension: 0.25,
+                yAxisID: "yRate",
+                borderDash: [6, 4]
               }
             ]
           },
@@ -561,53 +679,55 @@
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-              yPopulation: {
-                type: "linear",
-                position: "left",
+              y: {
                 beginAtZero: false,
-                title: {
-                  display: true,
-                  text: "人口"
-                }
+                title: { display: true, text: "人口 / 世帯数" }
               },
-              yHouseholds: {
-                type: "linear",
+              yRate: {
                 position: "right",
                 beginAtZero: false,
-                grid: {
-                  drawOnChartArea: false
-                },
-                title: {
-                  display: true,
-                  text: "世帯数"
-                }
+                grid: { drawOnChartArea: false },
+                title: { display: true, text: "増減率 (%)" }
               }
             },
             plugins: {
-              title: {
-                display: true,
-                text: "住民基本台帳人口と世帯数の推移"
-              }
+              title: { display: true, text: "住民基本台帳人口と世帯数の推移" }
             }
           }
         });
 
-        // 3. 転入・転出
+        // 3) 転入・転出
         const inData = migrationData.filter(d => d.direction === "in");
         const outData = migrationData.filter(d => d.direction === "out");
 
+        const migYears = inData.map(d => d.year);
+        const migIn = inData.map(d => toNumber(d.total));
+        const migOut = outData.map(d => toNumber(d.total));
+        const migRatio = calcRatioSeries(migIn, migOut);
+
         new Chart(document.getElementById("migrationChart"), {
-          type: "bar",
           data: {
-            labels: inData.map(d => d.year),
+            labels: migYears,
             datasets: [
               {
+                type: "bar",
                 label: "転入",
-                data: inData.map(d => toNumber(d.total))
+                data: migIn,
+                yAxisID: "y"
               },
               {
+                type: "bar",
                 label: "転出",
-                data: outData.map(d => toNumber(d.total))
+                data: migOut,
+                yAxisID: "y"
+              },
+              {
+                type: "line",
+                label: "転入/転出 倍率",
+                data: migRatio,
+                tension: 0.25,
+                yAxisID: "yRatio",
+                borderDash: [6, 4]
               }
             ]
           },
@@ -616,48 +736,73 @@
             maintainAspectRatio: false,
             scales: {
               y: {
-                beginAtZero: false
+                beginAtZero: false,
+                title: { display: true, text: "人数" }
+              },
+              yRatio: {
+                position: "right",
+                beginAtZero: false,
+                grid: { drawOnChartArea: false },
+                title: { display: true, text: "倍率" }
               }
             },
             plugins: {
-              title: {
-                display: true,
-                text: "転入・転出人口の推移"
-              }
+              title: { display: true, text: "転入・転出人口の推移" }
             }
           }
         });
 
-        // 4. 外国人住民人口
+        // 4) 外国人住民人口
+        const foreignYears = foreignData.map(d => d.year);
+        const foreignTotal = foreignData.map(d => toNumber(d.total));
+        const foreignRate = calcRateSeries(foreignTotal);
+
         new Chart(document.getElementById("foreignChart"), {
-          type: "bar",
           data: {
-            labels: foreignData.map(d => d.year),
+            labels: foreignYears,
             datasets: [
               {
+                type: "bar",
                 label: "韓国・朝鮮",
-                data: foreignData.map(d => toNumber(d.korea_korea)),
-                stack: "foreign"
+                data: foreignData.map(d => toNumber(d.korea_north_korea)),
+                stack: "foreign",
+                yAxisID: "y"
               },
               {
+                type: "bar",
                 label: "中国",
                 data: foreignData.map(d => toNumber(d.china)),
-                stack: "foreign"
+                stack: "foreign",
+                yAxisID: "y"
               },
               {
+                type: "bar",
                 label: "フィリピン",
                 data: foreignData.map(d => toNumber(d.philippines)),
-                stack: "foreign"
+                stack: "foreign",
+                yAxisID: "y"
               },
               {
+                type: "bar",
                 label: "ブラジル",
                 data: foreignData.map(d => toNumber(d.brazil)),
-                stack: "foreign"
+                stack: "foreign",
+                yAxisID: "y"
               },
               {
+                type: "bar",
                 label: "その他",
                 data: foreignData.map(d => toNumber(d.other)),
-                stack: "foreign"
+                stack: "foreign",
+                yAxisID: "y"
+              },
+              {
+                type: "line",
+                label: "総数増減率 (%)",
+                data: foreignRate,
+                tension: 0.25,
+                yAxisID: "yRate",
+                borderDash: [6, 4]
               }
             ]
           },
@@ -665,33 +810,53 @@
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-              x: {
-                stacked: true
-              },
+              x: { stacked: true },
               y: {
                 stacked: true,
-                beginAtZero: true
+                beginAtZero: true,
+                title: { display: true, text: "人数" }
+              },
+              yRate: {
+                position: "right",
+                beginAtZero: false,
+                grid: { drawOnChartArea: false },
+                title: { display: true, text: "増減率 (%)" }
               }
             },
             plugins: {
-              title: {
-                display: true,
-                text: "外国人住民人口の構成推移"
-              }
+              title: { display: true, text: "外国人住民人口の構成推移" }
             }
           }
         });
 
-        // 5. DID人口
+        // 5) DID人口
+        const didYears = didData.map(d => d.year);
+        const didPopulation = didData.map(d => toNumber(d.did_population));
+        const didDensity = didData.map(d => toNumber(d.did_population_density_per_km2));
+        const didArea = didData.map(d => toNumber(d.did_area_km2));
+
+        const didPopulationRate = calcRateSeries(didPopulation);
+        const didDensityRate = calcRateSeries(didDensity);
+        const didAreaRate = calcRateSeries(didArea);
+
         new Chart(document.getElementById("didPopulationChart"), {
-          type: "line",
           data: {
-            labels: didData.map(d => d.year),
+            labels: didYears,
             datasets: [
               {
+                type: "line",
                 label: "DID人口",
-                data: didData.map(d => toNumber(d.did_population)),
-                tension: 0.2
+                data: didPopulation,
+                tension: 0.2,
+                yAxisID: "y"
+              },
+              {
+                type: "line",
+                label: "増減率 (%)",
+                data: didPopulationRate,
+                tension: 0.2,
+                yAxisID: "yRate",
+                borderDash: [6, 4]
               }
             ]
           },
@@ -700,57 +865,148 @@
             maintainAspectRatio: false,
             scales: {
               y: {
-                beginAtZero: false
+                beginAtZero: false,
+                title: { display: true, text: "DID人口" }
+              },
+              yRate: {
+                position: "right",
+                beginAtZero: false,
+                grid: { drawOnChartArea: false },
+                title: { display: true, text: "増減率 (%)" }
               }
             },
             plugins: {
-              title: {
-                display: true,
-                text: "DID人口の推移"
-              }
+              title: { display: true, text: "DID人口の推移" }
             }
           }
         });
 
-        // 6. DID人口密度
+        // 6) DID人口密度
         new Chart(document.getElementById("didDensityChart"), {
+          data: {
+            labels: didYears,
+            datasets: [
+              {
+                type: "line",
+                label: "DID人口密度",
+                data: didDensity,
+                tension: 0.2,
+                yAxisID: "y"
+              },
+              {
+                type: "line",
+                label: "増減率 (%)",
+                data: didDensityRate,
+                tension: 0.2,
+                yAxisID: "yRate",
+                borderDash: [6, 4]
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: false,
+                title: { display: true, text: "人/km²" }
+              },
+              yRate: {
+                position: "right",
+                beginAtZero: false,
+                grid: { drawOnChartArea: false },
+                title: { display: true, text: "増減率 (%)" }
+              }
+            },
+            plugins: {
+              title: { display: true, text: "DID人口密度の推移" }
+            }
+          }
+        });
+
+        // 7) DID面積
+        new Chart(document.getElementById("didAreaChart"), {
+          data: {
+            labels: didYears,
+            datasets: [
+              {
+                type: "bar",
+                label: "DID面積 (km²)",
+                data: didArea,
+                yAxisID: "y"
+              },
+              {
+                type: "line",
+                label: "増減率 (%)",
+                data: didAreaRate,
+                tension: 0.2,
+                yAxisID: "yRate",
+                borderDash: [6, 4]
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: { display: true, text: "km²" }
+              },
+              yRate: {
+                position: "right",
+                beginAtZero: false,
+                grid: { drawOnChartArea: false },
+                title: { display: true, text: "増減率 (%)" }
+              }
+            },
+            plugins: {
+              title: { display: true, text: "DID面積の推移" }
+            }
+          }
+        });
+
+        // 8) 2050年シミュレーション
+        const estForecast = buildForecast(estimateData, "total_population", null, 2050, 10);
+        const regForecast = buildForecast(registryData, "total_population", null, 2050, 10);
+
+        const forecastLabels = mergeYearLabels(
+          estForecast.actualYears.concat(estForecast.forecastYears),
+          regForecast.actualYears.concat(regForecast.forecastYears)
+        );
+
+        const estActualSeries = createNullPaddedSeries(forecastLabels, estForecast.actualYears, estForecast.actualValues);
+        const estForecastSeries = createNullPaddedSeries(forecastLabels, estForecast.forecastYears, estForecast.forecastValues);
+
+        const regActualSeries = createNullPaddedSeries(forecastLabels, regForecast.actualYears, regForecast.actualValues);
+        const regForecastSeries = createNullPaddedSeries(forecastLabels, regForecast.forecastYears, regForecast.forecastValues);
+
+        new Chart(document.getElementById("forecastChart"), {
           type: "line",
           data: {
-            labels: didData.map(d => d.year),
+            labels: forecastLabels,
             datasets: [
               {
-                label: "DID人口密度",
-                data: didData.map(d => toNumber(d.did_density)),
+                label: "推計人口（実績）",
+                data: estActualSeries,
                 tension: 0.2
-              }
-            ]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              y: {
-                beginAtZero: false
-              }
-            },
-            plugins: {
-              title: {
-                display: true,
-                text: "DID人口密度の推移"
-              }
-            }
-          }
-        });
-
-        // 7. DID面積
-        new Chart(document.getElementById("didAreaChart"), {
-          type: "bar",
-          data: {
-            labels: didData.map(d => d.year),
-            datasets: [
+              },
               {
-                label: "DID面積 (km²)",
-                data: didData.map(d => toNumber(d.did_area))
+                label: "推計人口（試算）",
+                data: estForecastSeries,
+                tension: 0.2,
+                borderDash: [8, 5]
+              },
+              {
+                label: "住民基本台帳人口（実績）",
+                data: regActualSeries,
+                tension: 0.2
+              },
+              {
+                label: "住民基本台帳人口（試算）",
+                data: regForecastSeries,
+                tension: 0.2,
+                borderDash: [8, 5]
               }
             ]
           },
@@ -759,14 +1015,12 @@
             maintainAspectRatio: false,
             scales: {
               y: {
-                beginAtZero: true
+                beginAtZero: false,
+                title: { display: true, text: "人口" }
               }
             },
             plugins: {
-              title: {
-                display: true,
-                text: "DID面積の推移"
-              }
+              title: { display: true, text: "2050年までの探索的シミュレーション" }
             }
           }
         });
