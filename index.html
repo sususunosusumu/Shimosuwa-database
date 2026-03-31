@@ -278,7 +278,7 @@
     <section class="card chart-card">
       <h2>転入・転出人口の推移</h2>
       <p class="muted">
-        地域別転入転出データの総数を使って、年ごとの人の動きを比較しています。
+        地域別転入転出データをもとに、年ごとの転入・転出総数を集計して表示しています。
       </p>
       <div class="chart-wrap">
         <canvas id="migrationChart"></canvas>
@@ -319,7 +319,9 @@
     }
 
     function toNumber(value) {
-      return Number(String(value || "").replace(/,/g, ""));
+      const cleaned = String(value || "").replace(/,/g, "").trim();
+      const num = Number(cleaned);
+      return Number.isNaN(num) ? 0 : num;
     }
 
     async function init() {
@@ -332,6 +334,7 @@
 
         status.textContent = "現在の状態：データ読み込み完了";
 
+        // 推計人口
         new Chart(document.getElementById("estimateChart"), {
           type: "line",
           data: {
@@ -366,6 +369,7 @@
           }
         });
 
+        // 住民基本台帳人口
         new Chart(document.getElementById("registryChart"), {
           type: "line",
           data: {
@@ -395,21 +399,66 @@
           }
         });
 
-        const inData = migrationData.filter(d => d.type === "in");
-        const outData = migrationData.filter(d => d.type === "out");
+        // 転入・転出人口
+        // CSVの構造に合わせて柔軟に集計する
+        const grouped = {};
+
+        migrationData.forEach(d => {
+          const year = d.year || d["year"];
+          if (!year) return;
+
+          if (!grouped[year]) {
+            grouped[year] = { in: 0, out: 0 };
+          }
+
+          // まず "type" + "total" 形式に対応
+          if (d.type && d.total) {
+            if (d.type === "in") {
+              grouped[year].in += toNumber(d.total);
+            } else if (d.type === "out") {
+              grouped[year].out += toNumber(d.total);
+            }
+          }
+
+          // 次に "in" / "out" 列がある形式にも対応
+          if (d.in !== undefined) {
+            grouped[year].in += toNumber(d.in);
+          }
+          if (d.out !== undefined) {
+            grouped[year].out += toNumber(d.out);
+          }
+
+          // 日本語列名にも対応
+          if (d["転入"] !== undefined) {
+            grouped[year].in += toNumber(d["転入"]);
+          }
+          if (d["転出"] !== undefined) {
+            grouped[year].out += toNumber(d["転出"]);
+          }
+
+          // 総数列名の揺れにも一部対応
+          if (d["type"] === "in" && d["総数"] !== undefined) {
+            grouped[year].in += toNumber(d["総数"]);
+          }
+          if (d["type"] === "out" && d["総数"] !== undefined) {
+            grouped[year].out += toNumber(d["総数"]);
+          }
+        });
+
+        const years = Object.keys(grouped).sort((a, b) => Number(a) - Number(b));
 
         new Chart(document.getElementById("migrationChart"), {
           type: "bar",
           data: {
-            labels: inData.map(d => d.year),
+            labels: years,
             datasets: [
               {
                 label: "転入",
-                data: inData.map(d => toNumber(d.total))
+                data: years.map(y => grouped[y].in)
               },
               {
                 label: "転出",
-                data: outData.map(d => toNumber(d.total))
+                data: years.map(y => grouped[y].out)
               }
             ]
           },
