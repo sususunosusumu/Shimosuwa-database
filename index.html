@@ -13,7 +13,6 @@
       --text: #1f2937;
       --sub: #5b6b7a;
       --accent: #2f5d7e;
-      --accent-2: #5f85a2;
       --soft: #eaf2f8;
       --shadow: 0 8px 24px rgba(24, 39, 75, 0.08);
       --radius: 18px;
@@ -90,12 +89,6 @@
     .card h2 {
       margin: 0 0 14px;
       font-size: 22px;
-      color: var(--accent);
-    }
-
-    .card h3 {
-      margin: 0 0 12px;
-      font-size: 18px;
       color: var(--accent);
     }
 
@@ -271,14 +264,14 @@
         <canvas id="registryChart"></canvas>
       </div>
       <div class="note">
-        人口だけでなく世帯数も合わせて見ることで、「人は減っても世帯は大きくは減らない」といった変化も読み取れます。
+        人口と世帯数は桁が大きく違うため、右側に世帯数専用の軸を置いて見やすくしています。
       </div>
     </section>
 
     <section class="card chart-card">
       <h2>転入・転出人口の推移</h2>
       <p class="muted">
-        地域別転入転出データをもとに、年ごとの転入・転出総数を集計して表示しています。
+        地域別転入転出データをもとに、年ごとの転入・転出総数を表示しています。
       </p>
       <div class="chart-wrap">
         <canvas id="migrationChart"></canvas>
@@ -334,7 +327,6 @@
 
         status.textContent = "現在の状態：データ読み込み完了";
 
-        // 推計人口
         new Chart(document.getElementById("estimateChart"), {
           type: "line",
           data: {
@@ -343,23 +335,31 @@
               {
                 label: "総人口",
                 data: estimateData.map(d => toNumber(d.total_population)),
-                tension: 0.25
+                tension: 0.25,
+                yAxisID: "y"
               },
               {
                 label: "男性",
                 data: estimateData.map(d => toNumber(d.male)),
-                tension: 0.25
+                tension: 0.25,
+                yAxisID: "y"
               },
               {
                 label: "女性",
                 data: estimateData.map(d => toNumber(d.female)),
-                tension: 0.25
+                tension: 0.25,
+                yAxisID: "y"
               }
             ]
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: false
+              }
+            },
             plugins: {
               title: {
                 display: true,
@@ -369,7 +369,6 @@
           }
         });
 
-        // 住民基本台帳人口
         new Chart(document.getElementById("registryChart"), {
           type: "line",
           data: {
@@ -377,19 +376,44 @@
             datasets: [
               {
                 label: "人口",
-                data: registryData.map(d => toNumber(d.population)),
-                tension: 0.25
+                data: registryData.map(d => toNumber(d.total_population)),
+                tension: 0.25,
+                yAxisID: "yPopulation"
               },
               {
                 label: "世帯数",
                 data: registryData.map(d => toNumber(d.households)),
-                tension: 0.25
+                tension: 0.25,
+                yAxisID: "yHouseholds"
               }
             ]
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
+            scales: {
+              yPopulation: {
+                type: "linear",
+                position: "left",
+                beginAtZero: false,
+                title: {
+                  display: true,
+                  text: "人口"
+                }
+              },
+              yHouseholds: {
+                type: "linear",
+                position: "right",
+                beginAtZero: false,
+                grid: {
+                  drawOnChartArea: false
+                },
+                title: {
+                  display: true,
+                  text: "世帯数"
+                }
+              }
+            },
             plugins: {
               title: {
                 display: true,
@@ -399,72 +423,32 @@
           }
         });
 
-        // 転入・転出人口
-        // CSVの構造に合わせて柔軟に集計する
-        const grouped = {};
-
-        migrationData.forEach(d => {
-          const year = d.year || d["year"];
-          if (!year) return;
-
-          if (!grouped[year]) {
-            grouped[year] = { in: 0, out: 0 };
-          }
-
-          // まず "type" + "total" 形式に対応
-          if (d.type && d.total) {
-            if (d.type === "in") {
-              grouped[year].in += toNumber(d.total);
-            } else if (d.type === "out") {
-              grouped[year].out += toNumber(d.total);
-            }
-          }
-
-          // 次に "in" / "out" 列がある形式にも対応
-          if (d.in !== undefined) {
-            grouped[year].in += toNumber(d.in);
-          }
-          if (d.out !== undefined) {
-            grouped[year].out += toNumber(d.out);
-          }
-
-          // 日本語列名にも対応
-          if (d["転入"] !== undefined) {
-            grouped[year].in += toNumber(d["転入"]);
-          }
-          if (d["転出"] !== undefined) {
-            grouped[year].out += toNumber(d["転出"]);
-          }
-
-          // 総数列名の揺れにも一部対応
-          if (d["type"] === "in" && d["総数"] !== undefined) {
-            grouped[year].in += toNumber(d["総数"]);
-          }
-          if (d["type"] === "out" && d["総数"] !== undefined) {
-            grouped[year].out += toNumber(d["総数"]);
-          }
-        });
-
-        const years = Object.keys(grouped).sort((a, b) => Number(a) - Number(b));
+        const inData = migrationData.filter(d => d.direction === "in");
+        const outData = migrationData.filter(d => d.direction === "out");
 
         new Chart(document.getElementById("migrationChart"), {
           type: "bar",
           data: {
-            labels: years,
+            labels: inData.map(d => d.year),
             datasets: [
               {
                 label: "転入",
-                data: years.map(y => grouped[y].in)
+                data: inData.map(d => toNumber(d.total))
               },
               {
                 label: "転出",
-                data: years.map(y => grouped[y].out)
+                data: outData.map(d => toNumber(d.total))
               }
             ]
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: false
+              }
+            },
             plugins: {
               title: {
                 display: true,
