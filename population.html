@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>人口統計 | 下諏訪データポータル</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg: #f3f7fb;
+      --card: #fff;
+      --line: #dce7f0;
+      --text: #1d3344;
+      --sub: #5c6f80;
+      --accent: #1a6ea7;
+      --accent2: #1b9f79;
+      --soft: #eaf3fa;
+      --shadow: 0 14px 38px rgba(20,50,80,0.10);
+      --radius: 22px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Yu Gothic", "Hiragino Sans", sans-serif;
+      background: linear-gradient(180deg, #f8fbfe 0%, var(--bg) 100%);
+      color: var(--text);
+    }
+    header {
+      background: linear-gradient(135deg, #184d70 0%, #2679b0 100%);
+      color: white;
+      padding: 30px 18px 28px;
+    }
+    .header-inner, main, footer { max-width: 1220px; margin: 0 auto; }
+    .eyebrow {
+      display: inline-block; padding: 8px 12px; border-radius: 999px;
+      background: rgba(255,255,255,0.14); font-size: 12px; font-weight: 700; letter-spacing: .08em;
+      margin-bottom: 12px;
+    }
+    h1 { margin: 0 0 10px; font-size: clamp(30px, 5vw, 46px); }
+    .lead { margin: 0; line-height: 1.8; color: rgba(255,255,255,0.92); }
+    main { padding: 24px 16px 48px; }
+    .toolbar, .grid2, .grid3, .card { margin-bottom: 18px; }
+    .toolbar, .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .card h2 { margin: 0 0 12px; color: var(--accent); font-size: 24px; }
+    .card h3 { margin: 0 0 10px; color: var(--accent); font-size: 19px; }
+    .muted { color: var(--sub); line-height: 1.8; font-size: 14px; }
+    .chart-wrap { position: relative; min-height: 360px; }
+    canvas { width: 100% !important; height: 360px !important; }
+    .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .kpi { background: #fbfdff; border: 1px solid var(--line); border-radius: 16px; padding: 16px; }
+    .kpi .label { font-size: 12px; color: var(--sub); margin-bottom: 8px; }
+    .kpi .value { font-size: 28px; font-weight: 800; color: var(--accent); }
+    .kpi .small { margin-top: 6px; font-size: 12px; color: var(--sub); }
+    .filters { display: flex; gap: 12px; flex-wrap: wrap; align-items: end; }
+    .control { min-width: 180px; flex: 1; }
+    .control label { display: block; font-size: 12px; color: var(--sub); margin-bottom: 6px; }
+    .control select, .control input {
+      width: 100%; padding: 12px 14px; border: 1px solid var(--line); border-radius: 14px;
+      background: white; color: var(--text); font-size: 14px;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { padding: 10px 8px; border-bottom: 1px solid var(--line); text-align: left; }
+    th { color: var(--sub); font-weight: 700; background: #fbfdff; position: sticky; top: 0; }
+    .table-wrap { max-height: 460px; overflow: auto; border: 1px solid var(--line); border-radius: 16px; }
+    .pill { display: inline-block; padding: 4px 10px; border-radius: 999px; background: var(--soft); color: var(--accent); font-size: 12px; }
+    .section-title { margin: 28px 0 12px; color: var(--accent); font-size: 28px; }
+    .note { margin-top: 10px; font-size: 13px; color: var(--sub); line-height: 1.7; }
+    .status { padding: 12px 14px; border-radius: 12px; background: var(--soft); color: var(--sub); font-size: 14px; margin-top: 14px; }
+    .back { color: white; text-decoration: none; font-weight: 700; }
+    @media (max-width: 980px) {
+      .grid2, .grid3, .kpis { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="eyebrow">SHIMOSUWA POPULATION PAGE</div>
+      <h1>人口統計ページ</h1>
+      <p class="lead">町全体の人口推移から、地区ごとの変化まで。公開統計を、見比べやすく・考えやすくしたページです。</p>
+      <div style="margin-top:12px;"><a class="back" href="index.html">← ポータルへ戻る</a></div>
+    </div>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>ページの見どころ</h2>
+      <p class="muted">人口の長期推移、住民基本台帳人口、転入・転出、外国人住民人口、DID、地区別人口の比較まで、一つのページで見られるようにしています。町全体の流れ → 構成の変化 → 地区別差 という順に並べています。</p>
+      <div class="status" id="status">読み込み待機中</div>
+      <div class="kpis" style="margin-top:16px;">
+        <div class="kpi"><div class="label">最新推計人口</div><div class="value" id="kpiEstimate">-</div><div class="small" id="kpiEstimateYear">-</div></div>
+        <div class="kpi"><div class="label">最新住基人口</div><div class="value" id="kpiRegistry">-</div><div class="small" id="kpiRegistryYear">-</div></div>
+        <div class="kpi"><div class="label">最新外国人住民</div><div class="value" id="kpiForeign">-</div><div class="small" id="kpiForeignYear">-</div></div>
+        <div class="kpi"><div class="label">最新DID人口</div><div class="value" id="kpiDid">-</div><div class="small" id="kpiDidYear">-</div></div>
+      </div>
+    </section>
+
+    <h2 class="section-title">1. 町全体の流れ</h2>
+    <section class="grid2">
+      <div class="card">
+        <h3>推計人口の推移</h3>
+        <div class="chart-wrap"><canvas id="estimateChart"></canvas></div>
+        <div class="note">左軸は人口、右軸は前年増減率です。</div>
+      </div>
+      <div class="card">
+        <h3>住民基本台帳人口・世帯数の推移</h3>
+        <div class="chart-wrap"><canvas id="registryChart"></canvas></div>
+        <div class="note">人口と世帯数は規模が違うため、左右別軸で表示します。</div>
+      </div>
+    </section>
+
+    <section class="grid2">
+      <div class="card">
+        <h3>転入・転出人口の推移</h3>
+        <div class="chart-wrap"><canvas id="migrationChart"></canvas></div>
+        <div class="note">右軸は転入÷転出の倍率です。1を超えると転入超過寄りです。</div>
+      </div>
+      <div class="card">
+        <h3>外国人住民人口の推移</h3>
+        <div class="chart-wrap"><canvas id="foreignChart"></canvas></div>
+        <div class="note">積み上げ棒と総数増減率を重ねています。</div>
+      </div>
+    </section>
+
+    <h2 class="section-title">2. 都市的なまとまり（DID）</h2>
+    <section class="grid3">
+      <div class="card">
+        <h3>DID人口の推移</h3>
+        <div class="chart-wrap"><canvas id="didPopulationChart"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>DID人口密度の推移</h3>
+        <div class="chart-wrap"><canvas id="didDensityChart"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>DID面積の推移</h3>
+        <div class="chart-wrap"><canvas id="didAreaChart"></canvas></div>
+      </div>
+    </section>
+
+    <h2 class="section-title">3. 地区別人口を見る</h2>
+    <section class="toolbar">
+      <div class="filters">
+        <div class="control">
+          <label for="districtDataset">データ時点</label>
+          <select id="districtDataset">
+            <option value="2024">2024-10-01</option>
+            <option value="2025">2025-04-01</option>
+          </select>
+        </div>
+        <div class="control">
+          <label for="districtSort">並び順</label>
+          <select id="districtSort">
+            <option value="total_desc">人口が多い順</option>
+            <option value="total_asc">人口が少ない順</option>
+            <option value="households_desc">世帯数が多い順</option>
+            <option value="name_asc">地区名順</option>
+          </select>
+        </div>
+        <div class="control">
+          <label for="districtSearch">地区名で検索</label>
+          <input id="districtSearch" type="text" placeholder="例：星が丘 / 東町 / 1区" />
+        </div>
+        <div class="control">
+          <label for="districtTopN">表示件数</label>
+          <select id="districtTopN">
+            <option value="10">上位10件</option>
+            <option value="20">上位20件</option>
+            <option value="999">すべて表示</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid2">
+      <div class="card">
+        <h3>地区別人口ランキング</h3>
+        <div class="chart-wrap"><canvas id="districtChart"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>2024-10 → 2025-04 の増減</h3>
+        <div class="chart-wrap"><canvas id="districtDeltaChart"></canvas></div>
+        <div class="note">2時点で同名地区が対応するものだけを比較しています。</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3>地区別一覧</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>地区名</th>
+              <th>世帯数</th>
+              <th>人口</th>
+              <th>男性</th>
+              <th>女性</th>
+            </tr>
+          </thead>
+          <tbody id="districtTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="header-inner" style="padding:0 16px 40px; color:var(--sub); font-size:13px; line-height:1.8;">
+    人口統計ページは、GitHub の <code>data/</code> 配下のCSVをそのまま読み込む前提です。列名が少し違っても拾えるように、読み込みはある程度柔軟にしています。
+  </footer>
+
+  <script>
+    const DATA = {
+      estimate: './data/population_estimate_trend.csv',
+      registry: './data/resident_registry_population.csv',
+      foreign: './data/foreign_resident_population.csv',
+      migration: './data/regional_migration.csv',
+      did: './data/did_population.csv',
+      district2024: './data/district_population_2024-10-01.csv',
+      district2025: './data/district_population_2025-04-01.csv'
+    };
+
+    async function loadCSV(path) {
+      const response = await fetch(path + `?v=${Date.now()}`);
+      if (!response.ok) throw new Error(`CSVの読み込みに失敗: ${path}`);
+      const text = await response.text();
+      const lines = text.trim().split(/\r?\n/);
+      const headers = splitCSVLine(lines[0]).map(h => h.trim());
+      return lines.slice(1).map(line => {
+        const cols = splitCSVLine(line);
+        const obj = {};
+        headers.forEach((h, i) => obj[h] = (cols[i] || '').trim());
+        return obj;
+      });
+    }
+
+    function splitCSVLine(line) {
+      const result = [];
+      let cur = '';
+      let inQuotes = false;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (ch === '"') {
+          if (inQuotes && line[i + 1] === '"') {
+            cur += '"'; i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (ch === ',' && !inQuotes) {
+          result.push(cur); cur = '';
+        } else {
+          cur += ch;
+        }
+      }
+      result.push(cur);
+      return result;
+    }
+
+    function num(v) {
+      const n = Number(String(v ?? '').replace(/,/g, '').replace(/%/g, '').trim());
+      return Number.isFinite(n) ? n : 0;
+    }
+    function fmt(v) { return num(v).toLocaleString('ja-JP'); }
+    function rateSeries(values) {
+      return values.map((v, i) => i === 0 || !values[i-1] ? null : ((v - values[i-1]) / values[i-1]) * 100);
+    }
+    function ratioSeries(a, b) {
+      return a.map((v, i) => b[i] ? v / b[i] : null);
+    }
+    function pick(obj, keys) {
+      for (const key of keys) if (obj[key] !== undefined) return obj[key];
+      return '';
+    }
+
+    let district2024 = [], district2025 = [], districtChartInstance = null, districtDeltaInstance = null;
+
+    function normalizeDistrictRow(row) {
+      return {
+        district: pick(row, ['district','町区','町区名','name']),
+        households: num(pick(row, ['households','世帯数'])),
+        total: num(pick(row, ['total','人口','計','total_population'])),
+        male: num(pick(row, ['male','男'])),
+        female: num(pick(row, ['female','女']))
+      };
+    }
+
+    function sortDistricts(rows, mode) {
+      const arr = [...rows];
+      if (mode === 'total_desc') arr.sort((a,b)=>b.total-a.total);
+      if (mode === 'total_asc') arr.sort((a,b)=>a.total-b.total);
+      if (mode === 'households_desc') arr.sort((a,b)=>b.households-a.households);
+      if (mode === 'name_asc') arr.sort((a,b)=>String(a.district).localeCompare(String(b.district), 'ja'));
+      return arr;
+    }
+
+    function renderDistrictSection() {
+      const datasetKey = document.getElementById('districtDataset').value;
+      const sortMode = document.getElementById('districtSort').value;
+      const q = document.getElementById('districtSearch').value.trim();
+      const topN = Number(document.getElementById('districtTopN').value);
+      const base = datasetKey === '2024' ? district2024 : district2025;
+
+      let rows = base.map(normalizeDistrictRow).filter(r => r.district && r.total > 0);
+      if (q) rows = rows.filter(r => r.district.includes(q));
+      rows = sortDistricts(rows, sortMode);
+      const shown = topN === 999 ? rows : rows.slice(0, topN);
+
+      const tbody = document.getElementById('districtTableBody');
+      tbody.innerHTML = shown.map(r => `
+        <tr>
+          <td><span class="pill">${r.district}</span></td>
+          <td>${fmt(r.households)}</td>
+          <td>${fmt(r.total)}</td>
+          <td>${fmt(r.male)}</td>
+          <td>${fmt(r.female)}</td>
+        </tr>
+      `).join('');
+
+      if (districtChartInstance) districtChartInstance.destroy();
+      districtChartInstance = new Chart(document.getElementById('districtChart'), {
+        type: 'bar',
+        data: {
+          labels: shown.map(r=>r.district),
+          datasets: [{ label: '人口', data: shown.map(r=>r.total) }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display:false } } }
+      });
+
+      const map24 = new Map(district2024.map(normalizeDistrictRow).filter(r=>r.district).map(r=>[r.district, r]));
+      const map25 = new Map(district2025.map(normalizeDistrictRow).filter(r=>r.district).map(r=>[r.district, r]));
+      const common = [...map24.keys()].filter(k => map25.has(k));
+      const deltas = common.map(k => ({ district:k, delta: map25.get(k).total - map24.get(k).total }))
+        .filter(d => d.delta !== 0)
+        .sort((a,b)=>Math.abs(b.delta)-Math.abs(a.delta))
+        .slice(0, 18);
+
+      if (districtDeltaInstance) districtDeltaInstance.destroy();
+      districtDeltaInstance = new Chart(document.getElementById('districtDeltaChart'), {
+        type: 'bar',
+        data: {
+          labels: deltas.map(d=>d.district),
+          datasets: [{ label: '人口増減', data: deltas.map(d=>d.delta) }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+    }
+
+    async function main() {
+      const status = document.getElementById('status');
+      try {
+        const [estimate, registry, foreign, migration, did, d24, d25] = await Promise.all([
+          loadCSV(DATA.estimate), loadCSV(DATA.registry), loadCSV(DATA.foreign), loadCSV(DATA.migration), loadCSV(DATA.did), loadCSV(DATA.district2024), loadCSV(DATA.district2025)
+        ]);
+        district2024 = d24; district2025 = d25;
+
+        document.getElementById('kpiEstimate').textContent = fmt(pick(estimate.at(-1), ['total_population','人口','total']));
+        document.getElementById('kpiEstimateYear').textContent = `${pick(estimate.at(-1), ['year'])}年`;
+        document.getElementById('kpiRegistry').textContent = fmt(pick(registry.at(-1), ['total_population','population','人口']));
+        document.getElementById('kpiRegistryYear').textContent = `${pick(registry.at(-1), ['year'])}年`;
+        document.getElementById('kpiForeign').textContent = fmt(pick(foreign.at(-1), ['total','総数']));
+        document.getElementById('kpiForeignYear').textContent = `${pick(foreign.at(-1), ['year'])}年`;
+        document.getElementById('kpiDid').textContent = fmt(pick(did.at(-1), ['did_population','DID人口']));
+        document.getElementById('kpiDidYear').textContent = `${pick(did.at(-1), ['year'])}年`;
+
+        const estYears = estimate.map(r=>pick(r,['year']));
+        const estPop = estimate.map(r=>num(pick(r,['total_population','人口','total'])));
+        const estMale = estimate.map(r=>num(pick(r,['male','男'])));
+        const estFemale = estimate.map(r=>num(pick(r,['female','女'])));
+        const estRate = rateSeries(estPop);
+        new Chart(document.getElementById('estimateChart'), {
+          data: {
+            labels: estYears,
+            datasets: [
+              { type:'line', label:'総人口', data: estPop, yAxisID:'y', tension:.25 },
+              { type:'line', label:'男性', data: estMale, yAxisID:'y', tension:.25 },
+              { type:'line', label:'女性', data: estFemale, yAxisID:'y', tension:.25 },
+              { type:'line', label:'増減率(%)', data: estRate, yAxisID:'y2', borderDash:[6,4], tension:.25 }
+            ]
+          },
+          options: { responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:false }, y2:{ position:'right', grid:{ drawOnChartArea:false } } } }
+        });
+
+        const regYears = registry.map(r=>pick(r,['year']));
+        const regPop = registry.map(r=>num(pick(r,['total_population','population','人口'])));
+        const regHouse = registry.map(r=>num(pick(r,['households','世帯数'])));
+        const regRate = rateSeries(regPop);
+        new Chart(document.getElementById('registryChart'), {
+          data: {
+            labels: regYears,
+            datasets: [
+              { type:'line', label:'人口', data: regPop, yAxisID:'y', tension:.25 },
+              { type:'line', label:'世帯数', data: regHouse, yAxisID:'y2', tension:.25 },
+              { type:'line', label:'人口増減率(%)', data: regRate, yAxisID:'y3', borderDash:[6,4], tension:.25 }
+            ]
+          },
+          options: { responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:false }, y2:{ position:'right', grid:{ drawOnChartArea:false } }, y3:{ position:'right', display:false } } }
+        });
+
+        const inRows = migration.filter(r => pick(r,['direction','type']) === 'in');
+        const outRows = migration.filter(r => pick(r,['direction','type']) === 'out');
+        const migYears = inRows.map(r=>pick(r,['year']));
+        const migIn = inRows.map(r=>num(pick(r,['total','総数'])));
+        const migOut = outRows.map(r=>num(pick(r,['total','総数'])));
+        const migRatio = ratioSeries(migIn, migOut);
+        new Chart(document.getElementById('migrationChart'), {
+          data: { labels:migYears, datasets:[
+            { type:'bar', label:'転入', data:migIn, yAxisID:'y' },
+            { type:'bar', label:'転出', data:migOut, yAxisID:'y' },
+            { type:'line', label:'転入/転出倍率', data:migRatio, yAxisID:'y2', tension:.25, borderDash:[6,4] }
+          ]},
+          options: { responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:false }, y2:{ position:'right', grid:{ drawOnChartArea:false } } } }
+        });
+
+        const fYears = foreign.map(r=>pick(r,['year']));
+        const fTotal = foreign.map(r=>num(pick(r,['total','総数'])));
+        const fRate = rateSeries(fTotal);
+        new Chart(document.getElementById('foreignChart'), {
+          data: { labels:fYears, datasets:[
+            { type:'bar', label:'韓国・朝鮮', data:foreign.map(r=>num(pick(r,['korea_north_korea','korea_korea','korea_chosen']))), stack:'s', yAxisID:'y' },
+            { type:'bar', label:'中国', data:foreign.map(r=>num(pick(r,['china']))), stack:'s', yAxisID:'y' },
+            { type:'bar', label:'フィリピン', data:foreign.map(r=>num(pick(r,['philippines']))), stack:'s', yAxisID:'y' },
+            { type:'bar', label:'ブラジル', data:foreign.map(r=>num(pick(r,['brazil']))), stack:'s', yAxisID:'y' },
+            { type:'bar', label:'その他', data:foreign.map(r=>num(pick(r,['other']))), stack:'s', yAxisID:'y' },
+            { type:'line', label:'総数増減率(%)', data:fRate, yAxisID:'y2', tension:.25, borderDash:[6,4] }
+          ]},
+          options: { responsive:true, maintainAspectRatio:false, scales:{ x:{ stacked:true }, y:{ stacked:true, beginAtZero:true }, y2:{ position:'right', grid:{ drawOnChartArea:false } } } }
+        });
+
+        const didYears = did.map(r=>pick(r,['year']));
+        const didPop = did.map(r=>num(pick(r,['did_population','DID人口'])));
+        const didDensity = did.map(r=>num(pick(r,['did_population_density_per_km2','did_density'])));
+        const didArea = did.map(r=>num(pick(r,['did_area_km2','did_area'])));
+        new Chart(document.getElementById('didPopulationChart'), { data:{ labels:didYears, datasets:[{ type:'line', label:'DID人口', data:didPop }, { type:'line', label:'増減率(%)', data:rateSeries(didPop), yAxisID:'y2', borderDash:[6,4] }]}, options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:false }, y2:{ position:'right', grid:{ drawOnChartArea:false } } } } });
+        new Chart(document.getElementById('didDensityChart'), { data:{ labels:didYears, datasets:[{ type:'line', label:'DID人口密度', data:didDensity }, { type:'line', label:'増減率(%)', data:rateSeries(didDensity), yAxisID:'y2', borderDash:[6,4] }]}, options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:false }, y2:{ position:'right', grid:{ drawOnChartArea:false } } } } });
+        new Chart(document.getElementById('didAreaChart'), { data:{ labels:didYears, datasets:[{ type:'bar', label:'DID面積', data:didArea }, { type:'line', label:'増減率(%)', data:rateSeries(didArea), yAxisID:'y2', borderDash:[6,4] }]}, options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true }, y2:{ position:'right', grid:{ drawOnChartArea:false } } } } });
+
+        renderDistrictSection();
+        ['districtDataset','districtSort','districtTopN'].forEach(id => document.getElementById(id).addEventListener('change', renderDistrictSection));
+        document.getElementById('districtSearch').addEventListener('input', renderDistrictSection);
+
+        status.textContent = `読み込み完了: 推計人口 ${estimate.length}件 / 住基 ${registry.length}件 / 地区別2024 ${district2024.length}件 / 地区別2025 ${district2025.length}件`;
+      } catch (err) {
+        console.error(err);
+        status.textContent = '読み込みエラー: ' + err.message;
+      }
+    }
+    main();
+  </script>
+</body>
+</html>

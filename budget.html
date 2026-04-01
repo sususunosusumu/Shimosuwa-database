@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2026年度予算ガイド | 下諏訪データポータル</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg: #f4faf7;
+      --card: #ffffff;
+      --line: #d9ebe2;
+      --text: #183247;
+      --sub: #5a6f67;
+      --accent: #148364;
+      --accent2: #0f6aa6;
+      --soft: #edf8f2;
+      --shadow: 0 14px 38px rgba(21,55,45,0.10);
+      --radius: 22px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Yu Gothic", "Hiragino Sans", sans-serif;
+      background: linear-gradient(180deg, #f8fcfa 0%, var(--bg) 100%);
+      color: var(--text);
+    }
+    header {
+      background: linear-gradient(135deg, #13674f 0%, #20ab82 100%);
+      color: white;
+      padding: 30px 18px 28px;
+    }
+    .header-inner, main, footer { max-width: 1260px; margin: 0 auto; }
+    .eyebrow {
+      display: inline-block; padding: 8px 12px; border-radius: 999px;
+      background: rgba(255,255,255,0.14); font-size: 12px; font-weight: 700; letter-spacing: .08em;
+      margin-bottom: 12px;
+    }
+    h1 { margin: 0 0 10px; font-size: clamp(30px, 5vw, 46px); }
+    .lead { margin: 0; line-height: 1.8; color: rgba(255,255,255,0.92); }
+    main { padding: 24px 16px 48px; }
+    .card, .toolbar {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      margin-bottom: 18px;
+    }
+    .hero-grid, .grid2, .grid3 { display: grid; gap: 18px; }
+    .hero-grid { grid-template-columns: 1.3fr 0.7fr; }
+    .grid2 { grid-template-columns: 1fr 1fr; }
+    .grid3 { grid-template-columns: repeat(3, 1fr); }
+    .card h2 { margin: 0 0 12px; font-size: 24px; color: var(--accent); }
+    .card h3 { margin: 0 0 10px; font-size: 19px; color: var(--accent); }
+    .muted { color: var(--sub); line-height: 1.8; font-size: 14px; }
+    .back { color: white; text-decoration: none; font-weight: 700; }
+    .status { padding: 12px 14px; border-radius: 12px; background: var(--soft); color: var(--sub); font-size: 14px; margin-top: 14px; }
+    .kpis { display:grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+    .kpi { background:#fbfefd; border:1px solid var(--line); border-radius:16px; padding:16px; }
+    .kpi .label { font-size:12px; color:var(--sub); margin-bottom:8px; }
+    .kpi .value { font-size:28px; font-weight:800; color:var(--accent); }
+    .kpi .small { margin-top:6px; font-size:12px; color:var(--sub); }
+    .chart-wrap { position:relative; min-height:340px; }
+    canvas { width:100% !important; height:340px !important; }
+    .filters { display:flex; gap:12px; flex-wrap:wrap; align-items:end; }
+    .control { min-width: 170px; flex:1; }
+    .control label { display:block; font-size:12px; color:var(--sub); margin-bottom:6px; }
+    .control input, .control select {
+      width:100%; padding:12px 14px; border:1px solid var(--line); border-radius:14px; background:white; font-size:14px; color:var(--text);
+    }
+    .summary-row { display:flex; flex-wrap:wrap; gap:10px; margin-top: 10px; }
+    .pill { display:inline-block; padding:8px 12px; border-radius:999px; background: var(--soft); color:var(--accent); font-size:13px; }
+    .table-wrap { max-height: 620px; overflow:auto; border:1px solid var(--line); border-radius:16px; }
+    table { width:100%; border-collapse:collapse; font-size:14px; }
+    th, td { padding:10px 8px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+    th { position:sticky; top:0; background:#fbfefd; color:var(--sub); z-index:1; }
+    .money { white-space: nowrap; font-weight:700; color: var(--accent); }
+    .right { text-align:right; }
+    .subgrid { display:grid; grid-template-columns: 1fr 1fr; gap:18px; }
+    .note { margin-top:10px; font-size:13px; color:var(--sub); line-height:1.7; }
+    @media (max-width: 980px) {
+      .hero-grid, .grid2, .grid3, .subgrid, .kpis { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="eyebrow">SHIMOSUWA BUDGET GUIDE 2026</div>
+      <h1>2026年度予算ガイドページ</h1>
+      <p class="lead">予算資料を、ただ読むだけでなく、絞り込む・並べ替える・合算する・比べるためのページです。興味のあるテーマから、必要な情報へすぐ入れるようにしています。</p>
+      <div style="margin-top:12px;"><a class="back" href="index.html">← ポータルへ戻る</a></div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero-grid">
+      <div class="card">
+        <h2>このページでできること</h2>
+        <p class="muted">章、節、担当課、キーワードでの絞り込み、予算額順や増減率順での並び替え、グループ別合算、歳入・歳出の比較、プロジェクト詳細の一覧表示ができます。町の人が「気になるところだけ」を素早く見られる設計にしています。</p>
+        <div class="summary-row">
+          <span class="pill">事業一覧</span>
+          <span class="pill">担当課別集計</span>
+          <span class="pill">章・節別集計</span>
+          <span class="pill">歳入・歳出</span>
+          <span class="pill">ランキング</span>
+          <span class="pill">検索・並び替え</span>
+        </div>
+        <div class="status" id="status">読み込み待機中</div>
+      </div>
+      <div class="card">
+        <div class="kpis">
+          <div class="kpi"><div class="label">一般会計</div><div class="value" id="kpiGeneral">-</div><div class="small">2026年度</div></div>
+          <div class="kpi"><div class="label">特別会計合計</div><div class="value" id="kpiSpecial">-</div><div class="small">2026年度</div></div>
+          <div class="kpi"><div class="label">企業会計合計</div><div class="value" id="kpiEnterprise">-</div><div class="small">2026年度</div></div>
+          <div class="kpi"><div class="label">総事業数</div><div class="value" id="kpiProjects">-</div><div class="small">一覧CSV件数</div></div>
+        </div>
+      </div>
+    </section>
+
+    <h2 style="color:var(--accent); margin:28px 0 12px;">1. 予算の全体像</h2>
+    <section class="grid3">
+      <div class="card">
+        <h3>会計別サマリー</h3>
+        <div class="chart-wrap"><canvas id="accountChart"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>一般会計歳入 上位</h3>
+        <div class="chart-wrap"><canvas id="revenueChart"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>一般会計歳出 上位</h3>
+        <div class="chart-wrap"><canvas id="expenditureChart"></canvas></div>
+      </div>
+    </section>
+
+    <h2 style="color:var(--accent); margin:28px 0 12px;">2. 事業をいろいろな角度から見る</h2>
+    <section class="toolbar">
+      <div class="filters">
+        <div class="control">
+          <label for="searchText">キーワード検索</label>
+          <input id="searchText" type="text" placeholder="事業名 / 目的 / 担当課 など" />
+        </div>
+        <div class="control">
+          <label for="chapterFilter">章</label>
+          <select id="chapterFilter"><option value="">すべて</option></select>
+        </div>
+        <div class="control">
+          <label for="sectionFilter">節</label>
+          <select id="sectionFilter"><option value="">すべて</option></select>
+        </div>
+        <div class="control">
+          <label for="departmentFilter">担当課</label>
+          <select id="departmentFilter"><option value="">すべて</option></select>
+        </div>
+        <div class="control">
+          <label for="sortBy">並び順</label>
+          <select id="sortBy">
+            <option value="budget_desc">2026予算が大きい順</option>
+            <option value="budget_asc">2026予算が小さい順</option>
+            <option value="change_desc">増減率が大きい順</option>
+            <option value="change_asc">増減率が小さい順</option>
+            <option value="name_asc">事業名順</option>
+          </select>
+        </div>
+        <div class="control">
+          <label for="limitRows">表示件数</label>
+          <select id="limitRows">
+            <option value="20">20件</option>
+            <option value="50">50件</option>
+            <option value="100">100件</option>
+            <option value="9999">すべて</option>
+          </select>
+        </div>
+      </div>
+      <div class="summary-row" style="margin-top:14px;">
+        <span class="pill" id="filteredCount">-</span>
+        <span class="pill" id="filteredTotal">-</span>
+        <span class="pill" id="filteredAvg">-</span>
+      </div>
+    </section>
+
+    <section class="subgrid">
+      <div class="card">
+        <h3>いま見ている条件の上位ランキング</h3>
+        <div class="chart-wrap"><canvas id="projectTopChart"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>グループ別合算</h3>
+        <div class="filters" style="margin-bottom:12px;">
+          <div class="control">
+            <label for="groupBy">集計軸</label>
+            <select id="groupBy">
+              <option value="chapter">章ごと</option>
+              <option value="section">節ごと</option>
+              <option value="department">担当課ごと</option>
+            </select>
+          </div>
+        </div>
+        <div class="chart-wrap"><canvas id="groupChart"></canvas></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3>事業一覧</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>事業名</th>
+              <th>章</th>
+              <th>節</th>
+              <th>担当課</th>
+              <th class="right">2026予算</th>
+              <th class="right">2025予算</th>
+              <th class="right">増減率</th>
+              <th>目的 / 主な取組</th>
+            </tr>
+          </thead>
+          <tbody id="projectTableBody"></tbody>
+        </table>
+      </div>
+      <div class="note">事業コードや主な経費も元CSVにあるので、必要なら次の段階で詳細モーダルを付けられます。</div>
+    </section>
+  </main>
+
+  <footer class="header-inner" style="padding:0 16px 40px; color:var(--sub); font-size:13px; line-height:1.8;">
+    予算ページは <code>budget_guide_2026_projects.csv</code> を中心に、会計サマリー・歳入・歳出CSVを合わせて使います。まずは「見やすく探せる」を優先した構成です。
+  </footer>
+
+  <script>
+    const FILES = {
+      projects: './data/budget_guide_2026_projects.csv',
+      account: './data/budget_guide_2026_account_summary.csv',
+      revenue: './data/budget_guide_2026_general_revenue.csv',
+      expenditure: './data/budget_guide_2026_general_expenditure.csv'
+    };
+
+    let projects = [], accountSummary = [], revenue = [], expenditure = [];
+    let topChart = null, groupChart = null;
+
+    async function loadCSV(path) {
+      const response = await fetch(path + `?v=${Date.now()}`);
+      if (!response.ok) throw new Error(`CSVの読み込みに失敗: ${path}`);
+      const text = await response.text();
+      const lines = text.trim().split(/\r?\n/);
+      const headers = splitCSVLine(lines[0]).map(h => h.trim());
+      return lines.slice(1).map(line => {
+        const cols = splitCSVLine(line);
+        const obj = {};
+        headers.forEach((h, i) => obj[h] = (cols[i] || '').trim());
+        return obj;
+      });
+    }
+
+    function splitCSVLine(line) {
+      const result = []; let cur = ''; let inQuotes = false;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (ch === '"') {
+          if (inQuotes && line[i + 1] === '"') { cur += '"'; i++; }
+          else inQuotes = !inQuotes;
+        } else if (ch === ',' && !inQuotes) { result.push(cur); cur = ''; }
+        else cur += ch;
+      }
+      result.push(cur); return result;
+    }
+
+    const num = v => {
+      const n = Number(String(v ?? '').replace(/,/g,'').replace(/%/g,'').trim());
+      return Number.isFinite(n) ? n : 0;
+    };
+    const fmt = v => num(v).toLocaleString('ja-JP');
+
+    function fillSelect(id, values) {
+      const el = document.getElementById(id);
+      el.innerHTML = '<option value="">すべて</option>' + [...new Set(values.filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ja')).map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
+    }
+
+    function escapeHtml(s) {
+      return String(s)
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;')
+        .replace(/'/g,'&#39;');
+    }
+
+    function getFilteredProjects() {
+      const q = document.getElementById('searchText').value.trim().toLowerCase();
+      const chapter = document.getElementById('chapterFilter').value;
+      const section = document.getElementById('sectionFilter').value;
+      const department = document.getElementById('departmentFilter').value;
+      const sortBy = document.getElementById('sortBy').value;
+      const limit = Number(document.getElementById('limitRows').value);
+
+      let rows = projects.filter(r => {
+        const hitQ = !q || [r.project_name, r.chapter, r.section, r.department, r.purpose, r.main_actions].join(' ').toLowerCase().includes(q);
+        return hitQ && (!chapter || r.chapter === chapter) && (!section || r.section === section) && (!department || r.department === department);
+      });
+
+      if (sortBy === 'budget_desc') rows.sort((a,b)=>num(b.budget_2026_man_yen)-num(a.budget_2026_man_yen));
+      if (sortBy === 'budget_asc') rows.sort((a,b)=>num(a.budget_2026_man_yen)-num(b.budget_2026_man_yen));
+      if (sortBy === 'change_desc') rows.sort((a,b)=>num(b.budget_change_rate_pct)-num(a.budget_change_rate_pct));
+      if (sortBy === 'change_asc') rows.sort((a,b)=>num(a.budget_change_rate_pct)-num(b.budget_change_rate_pct));
+      if (sortBy === 'name_asc') rows.sort((a,b)=>a.project_name.localeCompare(b.project_name,'ja'));
+
+      return { rows, limited: rows.slice(0, limit) };
+    }
+
+    function renderProjectTable(rows) {
+      const tbody = document.getElementById('projectTableBody');
+      tbody.innerHTML = rows.map(r => `
+        <tr>
+          <td><strong>${escapeHtml(r.project_name)}</strong><br><span style="color:#5a6f67;font-size:12px;">${escapeHtml(r.account_or_code || '')}</span></td>
+          <td>${escapeHtml(r.chapter || '')}</td>
+          <td>${escapeHtml(r.section || '')}</td>
+          <td>${escapeHtml(r.department || '')}</td>
+          <td class="right money">${escapeHtml(r.budget_2026_text || '')}</td>
+          <td class="right">${escapeHtml(r.budget_2025_text || '')}</td>
+          <td class="right">${r.budget_change_rate_pct ? num(r.budget_change_rate_pct).toFixed(1) + '%' : '—'}</td>
+          <td>${escapeHtml(r.purpose || '')}<br><span style="color:#5a6f67;font-size:12px;">${escapeHtml(r.main_actions || '')}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    function renderSummary(rows) {
+      const total = rows.reduce((s,r)=>s+num(r.budget_2026_man_yen),0);
+      document.getElementById('filteredCount').textContent = `件数: ${rows.length}件`;
+      document.getElementById('filteredTotal').textContent = `合計: ${fmt(total)}万円`;
+      document.getElementById('filteredAvg').textContent = `平均: ${rows.length ? fmt(Math.round(total/rows.length)) : 0}万円`;
+    }
+
+    function renderTopChart(rows) {
+      const top = [...rows].sort((a,b)=>num(b.budget_2026_man_yen)-num(a.budget_2026_man_yen)).slice(0, 12);
+      if (topChart) topChart.destroy();
+      topChart = new Chart(document.getElementById('projectTopChart'), {
+        type: 'bar',
+        data: { labels: top.map(r=>r.project_name), datasets:[{ label:'2026予算(万円)', data: top.map(r=>num(r.budget_2026_man_yen)) }] },
+        options: { responsive:true, maintainAspectRatio:false, indexAxis:'y', plugins:{ legend:{ display:false } } }
+      });
+    }
+
+    function groupRows(rows, key) {
+      const map = new Map();
+      rows.forEach(r => {
+        const name = r[key] || '未分類';
+        if (!map.has(name)) map.set(name, { name, total:0, count:0 });
+        const entry = map.get(name);
+        entry.total += num(r.budget_2026_man_yen);
+        entry.count += 1;
+      });
+      return [...map.values()].sort((a,b)=>b.total-a.total);
+    }
+
+    function renderGroupChart(rows) {
+      const groupBy = document.getElementById('groupBy').value;
+      const keyMap = { chapter:'chapter', section:'section', department:'department' };
+      const grouped = groupRows(rows, keyMap[groupBy]).slice(0, 12);
+      if (groupChart) groupChart.destroy();
+      groupChart = new Chart(document.getElementById('groupChart'), {
+        type: 'bar',
+        data: { labels: grouped.map(g=>g.name), datasets:[{ label:'合計予算(万円)', data: grouped.map(g=>g.total) }] },
+        options: { responsive:true, maintainAspectRatio:false, indexAxis:'y', plugins:{ legend:{ display:false } } }
+      });
+    }
+
+    function refreshProjectArea() {
+      const { rows, limited } = getFilteredProjects();
+      renderSummary(rows);
+      renderProjectTable(limited);
+      renderTopChart(rows);
+      renderGroupChart(rows);
+    }
+
+    async function init() {
+      const status = document.getElementById('status');
+      try {
+        [projects, accountSummary, revenue, expenditure] = await Promise.all([
+          loadCSV(FILES.projects), loadCSV(FILES.account), loadCSV(FILES.revenue), loadCSV(FILES.expenditure)
+        ]);
+
+        document.getElementById('kpiProjects').textContent = fmt(projects.length);
+        const general = accountSummary.find(r => r.account_name === '一般会計');
+        const specialTotal = accountSummary.find(r => r.account_name.includes('特別会計合計'));
+        const enterpriseTotal = accountSummary.find(r => r.account_name.includes('企業会計合計'));
+        document.getElementById('kpiGeneral').textContent = general ? general.budget_2026_text : '-';
+        document.getElementById('kpiSpecial').textContent = specialTotal ? specialTotal.budget_2026_text : '-';
+        document.getElementById('kpiEnterprise').textContent = enterpriseTotal ? enterpriseTotal.budget_2026_text : '-';
+
+        fillSelect('chapterFilter', projects.map(r=>r.chapter));
+        fillSelect('sectionFilter', projects.map(r=>r.section));
+        fillSelect('departmentFilter', projects.map(r=>r.department));
+
+        const accountRows = accountSummary.filter(r => !r.account_name.includes('合計') || r.account_name === '一般会計');
+        new Chart(document.getElementById('accountChart'), {
+          type:'bar',
+          data:{ labels: accountRows.map(r=>r.account_name), datasets:[{ label:'2026予算(万円)', data: accountRows.map(r=>num(r.budget_2026_man_yen)) }]},
+          options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } } }
+        });
+
+        const revTop = [...revenue].sort((a,b)=>num(b.budget_2026_man_yen)-num(a.budget_2026_man_yen)).slice(0,8);
+        new Chart(document.getElementById('revenueChart'), {
+          type:'doughnut',
+          data:{ labels: revTop.map(r=>r.item), datasets:[{ data: revTop.map(r=>num(r.budget_2026_man_yen)) }]},
+          options:{ responsive:true, maintainAspectRatio:false }
+        });
+
+        const expTop = [...expenditure].sort((a,b)=>num(b.budget_2026_man_yen)-num(a.budget_2026_man_yen)).slice(0,8);
+        new Chart(document.getElementById('expenditureChart'), {
+          type:'doughnut',
+          data:{ labels: expTop.map(r=>r.item), datasets:[{ data: expTop.map(r=>num(r.budget_2026_man_yen)) }]},
+          options:{ responsive:true, maintainAspectRatio:false }
+        });
+
+        ['searchText','chapterFilter','sectionFilter','departmentFilter','sortBy','limitRows','groupBy'].forEach(id => {
+          document.getElementById(id).addEventListener(id === 'searchText' ? 'input' : 'change', refreshProjectArea);
+        });
+
+        refreshProjectArea();
+        status.textContent = `読み込み完了: 事業一覧 ${projects.length}件 / 歳入 ${revenue.length}件 / 歳出 ${expenditure.length}件 / 会計サマリー ${accountSummary.length}件`;
+      } catch (err) {
+        console.error(err);
+        status.textContent = '読み込みエラー: ' + err.message;
+      }
+    }
+    init();
+  </script>
+</body>
+</html>

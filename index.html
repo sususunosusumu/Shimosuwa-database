@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>下諏訪データポータル | すすむの実験用ウィンドウ</title>
+  <style>
+    :root {
+      --bg: #edf3f8;
+      --card: rgba(255,255,255,0.88);
+      --text: #183247;
+      --sub: #4f6474;
+      --accent: #0f6aa6;
+      --accent2: #1aa17a;
+      --line: rgba(24,50,71,0.10);
+      --shadow: 0 20px 50px rgba(18, 43, 63, 0.10);
+      --radius: 24px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Yu Gothic", "Hiragino Sans", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(15,106,166,0.16), transparent 32%),
+        radial-gradient(circle at bottom right, rgba(26,161,122,0.14), transparent 28%),
+        linear-gradient(180deg, #f7fbfe 0%, var(--bg) 100%);
+    }
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 36px 18px 56px;
+    }
+    .hero {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 24px;
+      align-items: stretch;
+      margin-bottom: 28px;
+    }
+    .panel {
+      background: var(--card);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 28px;
+    }
+    .eyebrow {
+      display: inline-block;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(15,106,166,0.08);
+      color: var(--accent);
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+    h1 {
+      margin: 0 0 12px;
+      font-size: clamp(32px, 5vw, 52px);
+      line-height: 1.1;
+    }
+    .lead {
+      color: var(--sub);
+      line-height: 1.9;
+      font-size: 16px;
+      margin: 0;
+    }
+    .badge-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .badge {
+      padding: 9px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      background: rgba(24,50,71,0.06);
+      color: var(--sub);
+    }
+    .stats {
+      display: grid;
+      gap: 14px;
+    }
+    .stat {
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(15,106,166,0.07), rgba(26,161,122,0.05));
+      border: 1px solid var(--line);
+    }
+    .stat .label {
+      font-size: 13px;
+      color: var(--sub);
+      margin-bottom: 6px;
+    }
+    .stat .value {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+    }
+    .nav-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 360px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-decoration: none;
+      color: inherit;
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+    .nav-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(15,106,166,0.25);
+      box-shadow: 0 24px 60px rgba(18, 43, 63, 0.16);
+    }
+    .nav-card::after {
+      content: "";
+      position: absolute;
+      inset: auto -60px -60px auto;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.28);
+      filter: blur(1px);
+    }
+    .nav-card.population {
+      background: linear-gradient(145deg, #eaf4fb 0%, #ffffff 70%);
+    }
+    .nav-card.budget {
+      background: linear-gradient(145deg, #eefaf5 0%, #ffffff 70%);
+    }
+    .nav-top { position: relative; z-index: 1; }
+    .nav-type {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 14px;
+      background: rgba(255,255,255,0.82);
+    }
+    .nav-card h2 {
+      margin: 0 0 12px;
+      font-size: clamp(28px, 4vw, 40px);
+      line-height: 1.15;
+    }
+    .nav-card p {
+      margin: 0;
+      color: var(--sub);
+      line-height: 1.85;
+      font-size: 15px;
+      max-width: 36em;
+    }
+    .nav-list {
+      margin: 18px 0 0;
+      padding-left: 1.1em;
+      color: var(--sub);
+      line-height: 1.9;
+      font-size: 14px;
+    }
+    .nav-bottom {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 18px;
+      border-radius: 999px;
+      font-weight: 700;
+      color: white;
+      text-decoration: none;
+      box-shadow: var(--shadow);
+    }
+    .population .cta { background: linear-gradient(135deg, #0f6aa6, #3489c4); }
+    .budget .cta { background: linear-gradient(135deg, #148364, #20ab82); }
+    .mini-kpis {
+      display: grid;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--sub);
+      text-align: right;
+    }
+    .foot {
+      margin-top: 26px;
+      color: var(--sub);
+      font-size: 13px;
+      line-height: 1.8;
+      text-align: center;
+    }
+    @media (max-width: 900px) {
+      .hero, .cards { grid-template-columns: 1fr; }
+      .nav-card { min-height: 300px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="panel">
+        <div class="eyebrow">SUSUMU LABORATORY / SHIMOSUWA DATA PORTAL</div>
+        <h1>下諏訪データポータル</h1>
+        <p class="lead">
+          下諏訪町の公開資料を、見やすく・比較しやすく・考えやすくするための入口ページです。
+          人口統計の流れを見るページと、2026年度予算ガイドを多角的に読むページに分けて、
+          興味のあるテーマからすぐ入れるようにしています。
+        </p>
+        <div class="badge-list">
+          <span class="badge">人口推移</span>
+          <span class="badge">地区別人口</span>
+          <span class="badge">転入・転出</span>
+          <span class="badge">予算比較</span>
+          <span class="badge">部局別集計</span>
+          <span class="badge">テーマ別閲覧</span>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="stats">
+          <div class="stat">
+            <div class="label">入口 1</div>
+            <div class="value">人口統計ページ</div>
+          </div>
+          <div class="stat">
+            <div class="label">入口 2</div>
+            <div class="value">予算ガイドページ</div>
+          </div>
+          <div class="stat">
+            <div class="label">設計方針</div>
+            <div class="value" style="font-size:20px;">見たい項目へすぐ飛べる</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cards">
+      <a class="panel nav-card population" href="population.html">
+        <div class="nav-top">
+          <div class="nav-type">POPULATION / 人口統計</div>
+          <h2>人口統計を見る</h2>
+          <p>
+            町全体の人口推移だけでなく、転入・転出、外国人住民人口、DID、
+            地区別人口の比較まで見られるページです。
+          </p>
+          <ul class="nav-list">
+            <li>人口の長期推移と増減率</li>
+            <li>転入・転出のバランスと倍率</li>
+            <li>地区別人口の比較・増減ランキング</li>
+          </ul>
+        </div>
+        <div class="nav-bottom">
+          <span class="cta">人口ページへ進む →</span>
+          <div class="mini-kpis">
+            <span>町全体</span>
+            <span>構成</span>
+            <span>地区別</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="panel nav-card budget" href="budget.html">
+        <div class="nav-top">
+          <div class="nav-type">BUDGET / 2026年度予算ガイド</div>
+          <h2>予算資料を見る</h2>
+          <p>
+            2026年度予算ガイドを、会計全体、歳入・歳出、事業一覧、担当課・章・節ごとの集計など、
+            さまざまな角度から見られるページです。
+          </p>
+          <ul class="nav-list">
+            <li>項目検索・絞り込み・並び替え</li>
+            <li>章・節・担当課ごとの合算表示</li>
+            <li>大きい予算順のランキング表示</li>
+          </ul>
+        </div>
+        <div class="nav-bottom">
+          <span class="cta">予算ページへ進む →</span>
+          <div class="mini-kpis">
+            <span>集計</span>
+            <span>ソート</span>
+            <span>検索</span>
+          </div>
+        </div>
+      </a>
+    </section>
+
+    <div class="foot">
+      このページは案内ページです。GitHub Pages では <code>index.html</code> が最初に開くため、ここから各テーマページへ分岐する構成にしています。
+    </div>
+  </div>
+</body>
+</html>
