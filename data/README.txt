@@ -1,17 +1,31 @@
-# Shimosuwa population CSV data
+Shimosuwa 2026 Budget Guide CSV package
 
-Generated from the uploaded PDFs in this conversation.
+Files
+- budget_guide_2026_projects.csv
+  Main machine-readable project list extracted from the budget guide PDF.
+  Columns:
+  - page: source PDF page
+  - chapter / section
+  - project_name
+  - budget_2026_text / budget_2026_man_yen
+  - budget_2025_text / budget_2025_man_yen
+  - budget_diff_man_yen / budget_change_rate_pct
+  - department
+  - account_or_code: business code or special-account label
+  - purpose
+  - main_actions
+  - major_expenses_prev: major expense bullets shown in the page's prior-year budget panel
 
-## Files
-- population_estimate_trend.csv : 推計人口の推移（各年10月1日）
-- resident_registry_population.csv : 住民基本台帳人口（各年10月1日）
-- foreign_resident_population.csv : 外国人住民人口（各年4月1日）
-- regional_migration.csv : 地域別転入転出人口
-- did_population.csv : 人口集中地区（DID）
-- district_population_2024-10-01.csv : 町区別世帯数及び人口（令和6年10月1日）
-- district_population_2025-04-01.csv : 町区別世帯数及び人口（令和7年4月1日）
+- budget_guide_2026_account_summary.csv
+  Top-level account summary from the "当初予算" table.
 
-## Notes
-- CSV encoding is UTF-8 with BOM for Excel compatibility.
-- Era labels are preserved in era_year and normalized Gregorian years are included in year.
-- Blank values in foreign_resident_population.csv mean the source PDF did not provide that category for that year.
+- budget_guide_2026_general_revenue.csv
+  General account revenue summary.
+
+- budget_guide_2026_general_expenditure.csv
+  General account expenditure summary.
+
+Notes
+- Text was extracted from the uploaded PDF and normalized into CSV.
+- Because the source PDF is a designed booklet with multi-block page layout, a small number of rows may need spot-checking before public release.
+- Amount columns in *_man_yen use 万円 as the numeric base for easier sorting and charting.
