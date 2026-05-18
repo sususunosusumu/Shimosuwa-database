@@ -3,7 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>下諏訪町の予算をグラフで見る｜歳入・歳出・事業別分析｜SHIMOSUWA-LAB</title>
+  <title>下諏訪町の予算をグラフで見る｜2026年度 歳入・歳出・事業別分析｜SHIMOSUWA-LAB</title>
+  <meta name="description" content="下諏訪町の2026年度予算を、歳入・歳出・会計別サマリー・事業別一覧でわかりやすく可視化。担当課、章、節、キーワードで検索できる地域データページです。" />
+  <meta name="keywords" content="下諏訪町,下諏訪,予算,財政,歳入,歳出,事業別予算,自治体予算,下諏訪町予算,SHIMOSUWA-LAB" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="SHIMOSUWA-LAB" />
+  <link rel="canonical" href="https://sususunosusumu.github.io/Shimosuwa-database/budget.html" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="ja_JP" />
+  <meta property="og:site_name" content="SHIMOSUWA-LAB" />
+  <meta property="og:title" content="下諏訪町の予算をグラフで見る｜2026年度 歳入・歳出・事業別分析" />
+  <meta property="og:description" content="下諏訪町の2026年度予算を、グラフと検索機能でわかりやすく見るための地域データページです。" />
+  <meta property="og:url" content="https://sususunosusumu.github.io/Shimosuwa-database/budget.html" />
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
@@ -79,22 +92,77 @@
     .right { text-align:right; }
     .subgrid { display:grid; grid-template-columns: 1fr 1fr; gap:18px; }
     .note { margin-top:10px; font-size:13px; color:var(--sub); line-height:1.7; }
+    .seo-section {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin: 22px 0;
+      line-height: 1.9;
+    }
+    .seo-section h2 {
+      margin: 0 0 12px;
+      color: var(--accent);
+      font-size: 24px;
+    }
+    .seo-section h3 {
+      margin: 20px 0 8px;
+      color: var(--text);
+      font-size: 18px;
+    }
+    .seo-section p, .seo-section li { color: var(--sub); }
+    .seo-section ul { margin: 8px 0 0; padding-left: 1.3em; }
+    .related-links {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .related-links a {
+      display: block;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: var(--soft);
+      color: var(--accent);
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .breadcrumb {
+      font-size: 13px;
+      margin-bottom: 14px;
+      color: rgba(255,255,255,.84);
+    }
+    .breadcrumb a { color: white; font-weight: 700; text-decoration: none; }
     @media (max-width: 980px) {
-      .hero-grid, .grid2, .grid3, .subgrid, .kpis { grid-template-columns: 1fr; }
+      .hero-grid, .grid2, .grid3, .subgrid, .kpis, .related-links { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
   <header>
     <div class="header-inner">
+      <div class="breadcrumb"><a href="../index.html">SHIMOSUWA-LAB</a> ／ 地域データ ／ 下諏訪町の予算</div>
       <div class="eyebrow">SHIMOSUWA BUDGET GUIDE 2026</div>
-      <h1>2026年度予算ガイドページ</h1>
-      <p class="lead">予算資料を、ただ読むだけでなく、絞り込む・並べ替える・合算する・比べるためのページです。興味のあるテーマから、必要な情報へすぐ入れるようにしています。</p>
-      <div style="margin-top:12px;"><a class="back" href="index.html">← ポータルへ戻る</a></div>
+      <h1>下諏訪町の2026年度予算をグラフで見る</h1>
+      <p class="lead">下諏訪町の予算資料を、歳入・歳出・会計別サマリー・事業別一覧として見やすく整理した地域データページです。町の財政、税金の使い道、担当課ごとの事業を、検索・絞り込み・グラフで確認できます。</p>
+      <div style="margin-top:12px;"><a class="back" href="../index.html">← SHIMOSUWA-LAB トップへ戻る</a></div>
     </div>
   </header>
 
   <main>
+    <section class="seo-section" aria-labelledby="about-budget">
+      <h2 id="about-budget">下諏訪町の予算・財政をわかりやすく見るためのページ</h2>
+      <p>
+        このページでは、下諏訪町の2026年度予算について、一般会計、特別会計、企業会計、歳入、歳出、事業別予算をグラフと一覧表で確認できます。
+        公式資料だけでは読み取りにくい予算の全体像を、町民や地域に関心のある人が短時間で把握できるように、検索しやすい形に整理しています。
+      </p>
+      <p>
+        「下諏訪町の予算はどの分野に多く使われているのか」「どの担当課がどの事業を持っているのか」「前年から増えた事業は何か」といった観点で見ることができます。
+      </p>
+    </section>
+
     <section class="hero-grid">
       <div class="card">
         <h2>このページでできること</h2>
@@ -223,11 +291,61 @@
       </div>
       <div class="note">事業コードや主な経費も元CSVにあるので、必要なら次の段階で詳細モーダルを付けられます。</div>
     </section>
+    <section class="seo-section" aria-labelledby="how-to-use">
+      <h2 id="how-to-use">この予算ページの使い方</h2>
+      <h3>1. 下諏訪町の予算の全体像を見る</h3>
+      <p>会計別サマリーでは、一般会計、特別会計、企業会計の規模を比較できます。歳入・歳出グラフでは、町税、地方交付税、民生費、教育費など、主要な項目の構成を確認できます。</p>
+
+      <h3>2. 事業別予算を検索する</h3>
+      <p>事業一覧では、キーワード、章、節、担当課で絞り込みができます。防災、福祉、教育、子育て、観光、道路、公共施設など、関心のあるテーマから下諏訪町の事業を探せます。</p>
+
+      <h3>3. 担当課別・分野別に比較する</h3>
+      <p>グループ別合算を使うと、章ごと、節ごと、担当課ごとの予算規模を比較できます。町の重点分野や、予算配分の特徴を把握するための入口として使えます。</p>
+    </section>
+
+    <section class="seo-section" aria-labelledby="related-data">
+      <h2 id="related-data">下諏訪町の関連データを見る</h2>
+      <p>予算だけでなく、人口統計や気象データと合わせて見ることで、下諏訪町の暮らし、行政課題、地域の変化をより立体的に理解できます。</p>
+      <div class="related-links">
+        <a href="../weather/index.html">下諏訪の天気・気温データを見る</a>
+        <a href="../population/index.html">下諏訪町の人口統計を見る</a>
+        <a href="../index.html">SHIMOSUWA-LAB トップへ戻る</a>
+      </div>
+    </section>
   </main>
 
   <footer class="header-inner" style="padding:0 16px 40px; color:var(--sub); font-size:13px; line-height:1.8;">
-    予算ページは <code>budget_guide_2026_projects.csv</code> を中心に、会計サマリー・歳入・歳出CSVを合わせて使います。まずは「見やすく探せる」を優先した構成です。
+    このページは、下諏訪町の予算情報を町民目線で見やすく整理するために作成したSHIMOSUWA-LABの地域データページです。データは <code>budget_guide_2026_projects.csv</code>、会計サマリー、歳入、歳出CSVをもとに表示しています。
   </footer>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Dataset",
+    "name": "下諏訪町 2026年度予算データ",
+    "description": "下諏訪町の2026年度予算を、会計別サマリー、歳入、歳出、事業別一覧として可視化した地域データページです。",
+    "url": "https://sususunosusumu.github.io/SHIMOSUWA-LAB/budget/index.html",
+    "inLanguage": "ja",
+    "creator": {
+      "@type": "Organization",
+      "name": "SHIMOSUWA-LAB"
+    },
+    "spatialCoverage": {
+      "@type": "Place",
+      "name": "長野県諏訪郡下諏訪町"
+    },
+    "keywords": [
+      "下諏訪町",
+      "予算",
+      "財政",
+      "歳入",
+      "歳出",
+      "事業別予算",
+      "自治体データ",
+      "地域データ"
+    ]
+  }
+  </script>
 
   <script>
     const FILES = {
