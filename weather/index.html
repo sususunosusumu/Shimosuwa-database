@@ -417,28 +417,51 @@ function drawLineChart(canvas, series, yLabel="℃"){
     ctx.fillText(val.toFixed(1)+yLabel,8,yy+6);
   }
 
-  const hourTicks=[
-    {h:1,label:"1時"},
-    {h:6,label:"6時"},
-    {h:12,label:"12時"},
-    {h:18,label:"18時"},
-    {h:24,label:"24時"}
-  ];
+ const hourTicks=[
+  {h:1,label:"1時"},
+  {h:6,label:"6時"},
+  {h:12,label:"12時"},
+  {h:18,label:"18時"},
+  {h:24,label:"24時"}
+];
 
-  ctx.strokeStyle="#cbd5e1";
+ctx.font="16px sans-serif";
+
+for(const tick of hourTicks){
+
+  const xx=x(tick.h-1,24);
+
+  // 縦グリッド線
+  ctx.strokeStyle="#e5e7eb";
+  ctx.lineWidth=1;
+
+  ctx.beginPath();
+  ctx.moveTo(xx,padT);
+  ctx.lineTo(xx,H-padB);
+  ctx.stroke();
+
+  // 下の目盛り
+  ctx.strokeStyle="#94a3b8";
+
+  ctx.beginPath();
+  ctx.moveTo(xx,H-padB);
+  ctx.lineTo(xx,H-padB+8);
+  ctx.stroke();
+
+  // ラベル
   ctx.fillStyle="#64748b";
-  ctx.font="16px sans-serif";
 
-  for(const tick of hourTicks){
-    const xx=x(tick.h-1,24);
+  let tx=xx-14;
 
-    ctx.beginPath();
-    ctx.moveTo(xx,H-padB);
-    ctx.lineTo(xx,H-padB+7);
-    ctx.stroke();
+  if(tick.h===1) tx=xx-4;
+  if(tick.h===24) tx=xx-30;
 
-    ctx.fillText(tick.label,xx-14,H-12);
-  }
+  ctx.fillText(
+    tick.label,
+    tx,
+    H-16
+  );
+}
 
   const palette=["#0f766e","#2563eb","#9333ea","#ea580c"];
 
@@ -472,8 +495,7 @@ function drawLineChart(canvas, series, yLabel="℃"){
 function drawBarTrend(canvas, points, label, unit="℃", note=""){
   const ctx=canvas.getContext("2d"), W=canvas.width, H=canvas.height;
   ctx.clearRect(0,0,W,H);
-
-  const padL=62,padR=18,padT=34,padB=42;
+　const padL=62,padR=20,padT=34,padB=60;
   const vals=points.map(p=>p.v).filter(Number.isFinite);
 
   if(!vals.length){
