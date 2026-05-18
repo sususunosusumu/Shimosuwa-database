@@ -3,8 +3,36 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>下諏訪・諏訪 気象アーカイブ | Shimosuwa Database</title>
-  <meta name="description" content="諏訪の過去気温・雲量・昼夜の天気概況を、今日・過去・傾向の視点で見る下諏訪データベース用の気象アーカイブ。" />
+  <title>下諏訪・諏訪の過去天気と気温をグラフで見る｜気象アーカイブ｜Shimosuwa Database</title>
+  <meta name="description" content="下諏訪町周辺・諏訪地域の過去気温、時間別気温、雲量、昼夜の天気概況をグラフで可視化。今日の日付を過去データから比較できる気象アーカイブです。" />
+  <meta name="keywords" content="下諏訪 天気, 下諏訪 気温, 諏訪 過去天気, 諏訪 気温 推移, 下諏訪 気象データ, 諏訪地域 天気 統計, Shimosuwa Database" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://sususunosusumu.github.io/Shimosuwa-database/weather/index.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="下諏訪・諏訪の過去天気と気温をグラフで見る｜Shimosuwa Database" />
+  <meta property="og:description" content="諏訪地域の過去気温、雲量、昼夜の天気概況を、今日・過去・傾向の視点で見られる気象アーカイブです。" />
+  <meta property="og:url" content="https://sususunosusumu.github.io/Shimosuwa-database/weather/index.html" />
+  <meta property="og:site_name" content="Shimosuwa Database" />
+  <meta name="twitter:card" content="summary" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Dataset",
+    "name": "下諏訪・諏訪の気象アーカイブ",
+    "description": "諏訪地域の過去気温、時間別気温、雲量、昼夜の天気概況を可視化する気象データページ。",
+    "url": "https://sususunosusumu.github.io/Shimosuwa-database/weather/index.html",
+    "inLanguage": "ja",
+    "spatialCoverage": {
+      "@type": "Place",
+      "name": "長野県下諏訪町・諏訪地域"
+    },
+    "creator": {
+      "@type": "Organization",
+      "name": "Shimosuwa Database"
+    },
+    "keywords": ["下諏訪", "諏訪", "過去天気", "気温推移", "気象データ", "雲量"]
+  }
+  </script>
   <style>
     :root{
       --bg:#f6f7f8; --panel:#ffffff; --ink:#111827; --muted:#6b7280;
@@ -56,6 +84,14 @@
     .bar{height:10px;background:#e5e7eb;border-radius:999px;overflow:hidden}
     .bar>span{display:block;height:100%;background:#0f766e;border-radius:999px}
     .pill{display:inline-flex;padding:3px 8px;border-radius:999px;background:#f1f5f9;color:#334155;font-weight:800;font-size:12px}
+    .top-links{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap}
+    .top-links a{color:#0f172a;background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 12px;text-decoration:none;font-weight:800;font-size:13px}
+    .seo-panel{padding:20px}
+    .seo-panel h2{font-size:19px;margin:0 0 8px;letter-spacing:-.02em}
+    .seo-panel p{font-size:14px;color:var(--muted);margin:0 0 10px;line-height:1.9}
+    .related-links ul{margin:0;padding-left:1.2em;line-height:2}
+    .related-links a{color:var(--accent);font-weight:800;text-decoration:none}
+    .related-links a:hover{text-decoration:underline}
     @media(max-width:920px){.grid{grid-template-columns:1fr}.controls{position:relative;top:auto}.cards{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}}
     @media(max-width:560px){.hero{padding:24px}.cards{grid-template-columns:1fr}canvas{height:260px}}
   </style>
@@ -65,8 +101,14 @@
 <header>
   <div class="wrap hero">
     <div class="eyebrow">Shimosuwa Database / Weather Archive</div>
-    <h1>今日の空を、過去から見る。</h1>
-    <p class="lead">諏訪の時間別気温と日別天気概況を読み込み、選んだ日付を中心に、過去の気温カーブ・昼夜の天気割合・雲量傾向をまとめて表示します。</p>
+    <h1>下諏訪・諏訪の過去天気と気温をグラフで見る</h1>
+    <p class="lead">諏訪地域の時間別気温と日別天気概況を読み込み、選んだ日付を中心に、過去の気温カーブ・昼夜の天気割合・雲量傾向をまとめて表示します。</p>
+    <nav class="top-links" aria-label="関連ページ">
+      <a href="../index.html">トップページ</a>
+      <a href="../budget.html">予算データ</a>
+      <a href="../population.html">人口統計</a>
+      <a href="./index.html">気象アーカイブ</a>
+    </nav>
   </div>
 </header>
 
@@ -118,6 +160,12 @@
   </aside>
 
   <section class="content">
+    <div class="panel seo-panel">
+      <h2>下諏訪・諏訪地域の気象アーカイブについて</h2>
+      <p>このページでは、下諏訪町周辺・諏訪地域の過去気温、時間別気温、平均雲量、昼夜の天気概況を、日付を選んで確認できます。今日と同じ時期の過去データを比較し、気温の傾向や天気の出やすさを見られるようにしています。</p>
+      <p>「下諏訪の過去の気温を知りたい」「諏訪地域の気温推移を見たい」「同じ季節の天気傾向を確認したい」といった用途に使える、地域データベースの気象ページです。</p>
+    </div>
+
     <div class="cards">
       <div class="card"><div class="k">対象日</div><div class="v" id="cardDate">--</div><div class="s" id="cardRange">--</div></div>
       <div class="card"><div class="k">過去平均気温</div><div class="v" id="cardAvg">--</div><div class="s">選択日の全時刻平均</div></div>
@@ -164,6 +212,16 @@
           <tbody id="dailyTable"></tbody>
         </table>
       </div>
+    </div>
+
+    <div class="panel viz related-links">
+      <h2>関連ページ</h2>
+      <ul>
+        <li><a href="../index.html">Shimosuwa Database トップページ</a></li>
+        <li><a href="../budget.html">下諏訪町の予算をグラフで見る</a></li>
+        <li><a href="../population.html">下諏訪町の人口統計をグラフで見る</a></li>
+        <li><a href="./index.html">下諏訪・諏訪の気象アーカイブを見る</a></li>
+      </ul>
     </div>
   </section>
 </main>
