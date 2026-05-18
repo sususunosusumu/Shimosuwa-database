@@ -32,11 +32,10 @@
     label{display:flex;justify-content:space-between;gap:10px;font-weight:800;font-size:13px}
     .val{color:var(--accent2);font-variant-numeric:tabular-nums}
     input[type=range]{width:100%;accent-color:var(--accent);margin:12px 0 2px}
-    select,button{font:inherit}
-    .row{display:flex;gap:8px;flex-wrap:wrap}
-    button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 13px;font-weight:800;cursor:pointer}
+    button{font:inherit;border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 13px;font-weight:800;cursor:pointer}
     button.primary{background:#0f172a;color:#fff;border-color:#0f172a}
     button:hover{transform:translateY(-1px)}
+    .row{display:flex;gap:8px;flex-wrap:wrap}
     .status{font-size:12px;color:var(--muted);margin-top:12px;word-break:break-word}
     .note{font-size:12px;color:#64748b;padding:12px 16px;background:#f8fafc;border-radius:16px;border:1px solid var(--line);margin-top:12px}
     .content{display:grid;gap:18px}
@@ -114,7 +113,7 @@
 
     <div class="status" id="status">CSVを読み込み中...</div>
     <div class="note">
-      GitHubでは、この <b>index.html</b> を <b>/weather/</b> に置き、CSVは <b>/weather/temp/</b> と <b>/weather/tenki/</b> に置く想定です。
+      この <b>index.html</b> は <b>/weather/</b> に置き、CSVは <b>/weather/temp/</b> と <b>/weather/tenki/</b> に置く想定です。
     </div>
   </aside>
 
@@ -147,7 +146,7 @@
 
     <div class="panel viz">
       <h2>前後期間の天気割合</h2>
-      <p>「今日の前後3日」など、指定した窓で過去の昼・夜の天気傾向を集計します。</p>
+      <p>指定した窓で、過去の昼・夜の天気傾向を集計します。不明データは割合計算から除外します。</p>
       <div class="table-wrap">
         <table>
           <thead><tr><th>区分</th><th>天気</th><th>件数</th><th>割合</th><th>バー</th></tr></thead>
@@ -202,9 +201,11 @@ function addDaysMD(m,d,offset){
 }
 
 function normalizeWeather(s){
-  if(!s) return "不明";
+  if(!s) return "";
   s=String(s).trim();
-  if(!s) return "不明";
+  if(!s) return "";
+
+  if(s.includes("降水なし")) return "降水なし";
   if(s.includes("快晴")) return "晴れ系";
   if(s.includes("晴")) return "晴れ系";
   if(s.includes("曇")) return "曇り系";
@@ -212,8 +213,13 @@ function normalizeWeather(s){
   if(s.includes("雪")) return "雪系";
   if(s.includes("霧")) return "霧";
   if(s.includes("雷")) return "雷";
-  if(s.includes("降水なし")) return "降水なし";
+
   return s;
+}
+
+function isKnownWeather(v){
+  const w=normalizeWeather(v);
+  return w && w !== "不明";
 }
 
 async function fetchText(path){
@@ -236,7 +242,7 @@ function parseTempCsv(text){
   const header=headerIndex>=0 ? rawLines[headerIndex].split(",").map(x=>x.trim()) : [];
   const lines=rawLines.slice(headerIndex>=0 ? headerIndex+1 : 5).filter(line=>/^\d{4},/.test(line));
 
-  const idx={
+  let idx={
     y:header.findIndex(h=>h==="年"),
     m:header.findIndex(h=>h==="月"),
     d:header.findIndex(h=>h==="日"),
@@ -254,6 +260,7 @@ function parseTempCsv(text){
   for(const line of lines){
     const c=line.split(",");
     const y=+c[idx.y], m=+c[idx.m], d=+c[idx.d], h=+c[idx.h], t=parseFloat(c[idx.t]);
+
     if(Number.isFinite(y)&&Number.isFinite(m)&&Number.isFinite(d)&&Number.isFinite(h)&&Number.isFinite(t)){
       rows.push({y,m,d,h,t});
     }
@@ -267,7 +274,7 @@ function parseTenkiCsv(text){
   const header=headerIndex>=0 ? rawLines[headerIndex].split(",").map(x=>x.trim()) : [];
   const lines=rawLines.slice(headerIndex>=0 ? headerIndex+1 : 5).filter(line=>/^\d{4},/.test(line));
 
-  const idx={
+  let idx={
     y:header.findIndex(h=>h==="年"),
     m:header.findIndex(h=>h==="月"),
     d:header.findIndex(h=>h==="日"),
@@ -312,13 +319,25 @@ function avg(a){
   return v.length ? v.reduce((x,y)=>x+y,0)/v.length : null;
 }
 
-function groupCount(rows, field){
+function groupCount(rows, field, knownOnly=false){
   const m=new Map();
+
   for(const r of rows){
     const k=normalizeWeather(r[field]);
+
+    if(knownOnly && !k) continue;
+    if(!k) continue;
+
     m.set(k,(m.get(k)||0)+1);
   }
+
   return [...m.entries()].sort((a,b)=>b[1]-a[1]);
+}
+
+function topWeather(rows, field){
+  const known=groupCount(rows, field, true);
+  if(known.length) return known[0][0];
+  return "--";
 }
 
 function fmt(v,unit="℃"){
@@ -363,7 +382,7 @@ function drawLineChart(canvas, series, yLabel="℃"){
   const ctx=canvas.getContext("2d"), W=canvas.width, H=canvas.height;
   ctx.clearRect(0,0,W,H);
 
-  const padL=62,padR=20,padT=34,padB=42;
+  const padL=62,padR=20,padT=34,padB=46;
   const all=series.flatMap(s=>s.data).filter(v=>v!=null&&Number.isFinite(v));
 
   if(!all.length){
@@ -398,6 +417,29 @@ function drawLineChart(canvas, series, yLabel="℃"){
     ctx.fillText(val.toFixed(1)+yLabel,8,yy+6);
   }
 
+  const hourTicks=[
+    {h:1,label:"1時"},
+    {h:6,label:"6時"},
+    {h:12,label:"12時"},
+    {h:18,label:"18時"},
+    {h:24,label:"24時"}
+  ];
+
+  ctx.strokeStyle="#cbd5e1";
+  ctx.fillStyle="#64748b";
+  ctx.font="16px sans-serif";
+
+  for(const tick of hourTicks){
+    const xx=x(tick.h-1,24);
+
+    ctx.beginPath();
+    ctx.moveTo(xx,H-padB);
+    ctx.lineTo(xx,H-padB+7);
+    ctx.stroke();
+
+    ctx.fillText(tick.label,xx-14,H-12);
+  }
+
   const palette=["#0f766e","#2563eb","#9333ea","#ea580c"];
 
   series.forEach((s,si)=>{
@@ -425,11 +467,6 @@ function drawLineChart(canvas, series, yLabel="℃"){
     ctx.font="20px sans-serif";
     ctx.fillText(s.name, padL+si*190, 24);
   });
-
-  ctx.fillStyle="#64748b";
-  ctx.font="18px sans-serif";
-  ctx.fillText("1時", padL, H-12);
-  ctx.fillText("24時", W-padR-48, H-12);
 }
 
 function drawBarTrend(canvas, points, label, unit="℃", note=""){
@@ -525,7 +562,7 @@ function render(){
   $("cardNow").textContent=hv==null ? "--" : fmt(hv);
   $("cardNowSub").textContent=rv==null ? "直近データなし" : `直近側平均との差 ${fmt(rv-hv,"℃")}`;
 
-  const dayWeather=groupCount(winTenki,"day");
+  const dayWeather=groupCount(winTenki,"day",true);
   const totalDay=dayWeather.reduce((a,b)=>a+b[1],0);
   const sunny=(dayWeather.find(x=>x[0]==="晴れ系")||[0,0])[1];
 
@@ -575,8 +612,21 @@ function render(){
   const blocks=[["昼 06-18時","day"],["夜 18-翌06時","night"]];
 
   for(const [name,field] of blocks){
-    const cnt=groupCount(winTenki,field);
+    const cnt=groupCount(winTenki,field,true);
     const total=cnt.reduce((a,b)=>a+b[1],0);
+
+    if(!total){
+      tbody.insertAdjacentHTML("beforeend",
+        `<tr>
+          <td><span class="pill">${name}</span></td>
+          <td>データなし</td>
+          <td>0</td>
+          <td>--</td>
+          <td><div class="bar"><span style="width:0%"></span></div></td>
+        </tr>`
+      );
+      continue;
+    }
 
     for(const [weather,n] of cnt.slice(0,10)){
       const pct=total ? n/total*100 : 0;
@@ -600,8 +650,8 @@ function render(){
     const tr=tenkiRows.filter(r=>r.m===md.m&&r.d===md.d&&filteredYears(r));
     const tt=tempRows.filter(r=>r.m===md.m&&r.d===md.d&&filteredYears(r));
 
-    const topDay=(groupCount(tr,"day")[0]||["--",0])[0];
-    const topNight=(groupCount(tr,"night")[0]||["--",0])[0];
+    const topDay=topWeather(tr,"day");
+    const topNight=topWeather(tr,"night");
 
     const rel=md.offset===0 ? "当日" : (md.offset>0 ? `+${md.offset}日` : `${md.offset}日`);
 
