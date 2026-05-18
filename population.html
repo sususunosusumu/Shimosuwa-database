@@ -3,8 +3,37 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>人口統計 | 下諏訪データポータル</title>
+  <title>下諏訪町の人口統計をグラフで見る｜人口推移・地区別人口・転入転出｜Shimosuwa Database</title>
+  <meta name="description" content="下諏訪町の人口統計をグラフで可視化。推計人口、住民基本台帳人口、外国人住民、転入転出、DID、地区別人口をスマホでも見やすく確認できます。" />
+  <meta name="keywords" content="下諏訪町 人口, 下諏訪 人口推移, 下諏訪町 統計, 下諏訪町 地区別人口, 下諏訪町 高齢化, 下諏訪町 転入転出, Shimosuwa Database" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://sususunosusumu.github.io/Shimosuwa-database/population.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="下諏訪町の人口統計をグラフで見る｜Shimosuwa Database" />
+  <meta property="og:description" content="下諏訪町の人口推移、住民基本台帳、外国人住民、DID、地区別人口を可視化した地域データページです。" />
+  <meta property="og:url" content="https://sususunosusumu.github.io/Shimosuwa-database/population.html" />
+  <meta property="og:site_name" content="Shimosuwa Database" />
+  <meta name="twitter:card" content="summary" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Dataset",
+    "name": "下諏訪町の人口統計データ可視化",
+    "description": "下諏訪町の推計人口、住民基本台帳人口、外国人住民人口、転入転出、DID、地区別人口を可視化するデータページ。",
+    "url": "https://sususunosusumu.github.io/Shimosuwa-database/population.html",
+    "inLanguage": "ja",
+    "spatialCoverage": {
+      "@type": "Place",
+      "name": "長野県下諏訪町"
+    },
+    "creator": {
+      "@type": "Organization",
+      "name": "Shimosuwa Database"
+    },
+    "keywords": ["下諏訪町", "人口統計", "人口推移", "地区別人口", "住民基本台帳", "DID"]
+  }
+  </script>
   <style>
     :root {
       --bg: #f3f7fb;
@@ -75,6 +104,11 @@
     .note { margin-top: 10px; font-size: 13px; color: var(--sub); line-height: 1.7; }
     .status { padding: 12px 14px; border-radius: 12px; background: var(--soft); color: var(--sub); font-size: 14px; margin-top: 14px; }
     .back { color: white; text-decoration: none; font-weight: 700; }
+    .seo-text h2, .related-links h2 { margin-top: 0; color: var(--accent); }
+    .seo-text p { color: var(--sub); line-height: 1.9; }
+    .related-links ul { margin: 0; padding-left: 1.2em; line-height: 2; }
+    .related-links a { color: var(--accent); font-weight: 700; text-decoration: none; }
+    .related-links a:hover { text-decoration: underline; }
     @media (max-width: 980px) {
       .grid2, .grid3, .kpis { grid-template-columns: 1fr; }
     }
@@ -84,9 +118,9 @@
   <header>
     <div class="header-inner">
       <div class="eyebrow">SHIMOSUWA POPULATION PAGE</div>
-      <h1>人口統計ページ</h1>
-      <p class="lead">町全体の人口推移から、地区ごとの変化まで。公開統計を、見比べやすく・考えやすくしたページです。</p>
-      <div style="margin-top:12px;"><a class="back" href="index.html">← ポータルへ戻る</a></div>
+      <h1>下諏訪町の人口統計をグラフで見る</h1>
+      <p class="lead">下諏訪町の人口推移、住民基本台帳人口、転入・転出、外国人住民、DID、地区別人口を、公開統計をもとに見比べやすく整理した地域データページです。</p>
+      <div style="margin-top:12px;"><a class="back" href="./index.html">← ポータルへ戻る</a></div>
     </div>
   </header>
 
@@ -101,6 +135,12 @@
         <div class="kpi"><div class="label">最新外国人住民</div><div class="value" id="kpiForeign">-</div><div class="small" id="kpiForeignYear">-</div></div>
         <div class="kpi"><div class="label">最新DID人口</div><div class="value" id="kpiDid">-</div><div class="small" id="kpiDidYear">-</div></div>
       </div>
+    </section>
+
+    <section class="card seo-text">
+      <h2>下諏訪町の人口統計について</h2>
+      <p>このページでは、下諏訪町の人口に関する公開データを、グラフと表で確認できます。町全体の人口推移だけでなく、住民基本台帳人口、世帯数、転入・転出、外国人住民、DID、地区別人口などを一つの画面で比較できるようにしています。</p>
+      <p>「下諏訪町の人口はどのように変化しているのか」「どの地区に人が多いのか」「転入・転出の傾向はどうか」といった地域理解に役立つよう、スマートフォンでも見やすい構成にしています。</p>
     </section>
 
     <h2 class="section-title">1. 町全体の流れ</h2>
@@ -212,6 +252,15 @@
   </main>
 
   <footer class="header-inner" style="padding:0 16px 40px; color:var(--sub); font-size:13px; line-height:1.8;">
+    <section class="card related-links" style="box-shadow:none;">
+      <h2>関連ページ</h2>
+      <ul>
+        <li><a href="./index.html">Shimosuwa Database トップページ</a></li>
+        <li><a href="./budget.html">下諏訪町の予算をグラフで見る</a></li>
+        <li><a href="./population.html">下諏訪町の人口統計をグラフで見る</a></li>
+        <li><a href="./weather/index.html">下諏訪・諏訪の気象アーカイブを見る</a></li>
+      </ul>
+    </section>
     人口統計ページは、GitHub の <code>data/</code> 配下のCSVをそのまま読み込む前提です。列名が少し違っても拾えるように、読み込みはある程度柔軟にしています。
   </footer>
 
