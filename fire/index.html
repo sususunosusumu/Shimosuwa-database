@@ -1,240 +1,401 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>下諏訪町 防火水槽・消火栓マップ</title>
-  <meta name="description" content="下諏訪町の防火水槽、地下式消火栓、地上式消火栓の位置を地図上で確認できるマップです。" />
-  <meta name="keywords" content="下諏訪町,防火水槽,消火栓,地上式消火栓,地下式消火栓,GIS,地図" />
-
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
-
-  <style>
-    :root {
-      --blue: #2563eb;
-      --red: #dc2626;
-      --orange: #f97316;
-      --ink: #0f172a;
-      --muted: #64748b;
-      --bg: #f8fafc;
-      --card: rgba(255,255,255,.96);
-      --line: #e2e8f0;
-      --header-h: 118px;
-      --side-w: 380px;
-    }
-
-    * { box-sizing: border-box; }
-    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
-    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--ink); background: var(--bg); }
-
-    header {
-      position: fixed; inset: 0 0 auto 0; height: var(--header-h); z-index: 1000;
-      padding: 24px 28px 18px;
-      background: linear-gradient(135deg, #0f172a, #1e293b);
-      color: white;
-      box-shadow: 0 2px 8px rgba(15,23,42,.18);
-    }
-    header h1 { margin: 0 0 8px; font-size: clamp(24px, 2.6vw, 36px); letter-spacing: .02em; }
-    header p { margin: 0; color: #cbd5e1; font-size: 15px; }
-
-    aside {
-      position: fixed; left: 0; top: var(--header-h); bottom: 0; width: var(--side-w); z-index: 900;
-      padding: 18px;
-      background: #ffffff;
-      border-right: 1px solid var(--line);
-      overflow: auto;
-    }
-
-    #map {
-      position: fixed;
-      left: var(--side-w);
-      right: 0;
-      top: var(--header-h);
-      bottom: 0;
-      z-index: 1;
-      background: #dbeafe;
-    }
-
-    .panel { border: 1px solid var(--line); border-radius: 16px; padding: 16px; margin-bottom: 16px; background: var(--card); box-shadow: 0 8px 24px rgba(15,23,42,.06); }
-    .panel h2 { margin: 0 0 12px; font-size: 17px; }
-    .filter-row { display: flex; align-items: center; gap: 10px; padding: 11px 0; border-bottom: 1px solid #f1f5f9; cursor: pointer; user-select: none; font-size: 16px; }
-    .filter-row:last-child { border-bottom: 0; }
-    .filter-row input { transform: scale(1.18); }
-    .dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; box-shadow: 0 0 0 3px rgba(15,23,42,.08); }
-    .blue { background: var(--blue); } .red { background: var(--red); } .orange { background: var(--orange); }
-    .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
-    button { border: 1px solid var(--line); border-radius: 12px; padding: 11px 12px; background: white; color: var(--ink); font-weight: 700; cursor: pointer; font-size: 14px; }
-    button:hover { background: #f1f5f9; }
-    .count-grid { display: grid; gap: 9px; }
-    .count-card { display: flex; justify-content: space-between; align-items: center; padding: 11px 13px; border-radius: 12px; background: #f8fafc; border: 1px solid #eef2f7; font-size: 14px; }
-    .count-card strong { font-size: 22px; }
-    .note { color: var(--muted); font-size: 12px; line-height: 1.7; }
-    .popup-title { font-weight: 800; margin-bottom: 4px; }
-    .popup-line { font-size: 12px; color: #475569; margin: 2px 0; }
-    .status { position: fixed; right: 16px; bottom: 16px; z-index: 1200; background: rgba(15,23,42,.9); color: white; border-radius: 12px; padding: 10px 12px; font-size: 13px; }
-    .status.hidden { display: none; }
-
-    @media (max-width: 760px) {
-      :root { --header-h: 104px; --side-w: 0px; }
-      html, body { overflow: auto; }
-      header { position: relative; height: auto; }
-      aside { position: relative; top: auto; bottom: auto; width: 100%; max-height: 310px; border-right: 0; border-bottom: 1px solid var(--line); }
-      #map { position: relative; left: auto; top: auto; right: auto; bottom: auto; width: 100%; height: 68vh; min-height: 430px; }
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>下諏訪町 防火水槽・消火栓マップ</title>
+<meta name="description" content="下諏訪町の防火水槽、地下式消火栓、地上式消火栓の位置を地図上で確認できるマップです。" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+<style>
+*{box-sizing:border-box}
+:root{
+  --navy:#111827;
+  --bg:#f8fafc;
+  --line:#e5e7eb;
+  --muted:#64748b;
+  --blue:#2563eb;
+  --red:#dc2626;
+  --orange:#f97316;
+}
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:#111827;
+  background:var(--bg);
+}
+.top{
+  height:112px;
+  background:linear-gradient(135deg,#0f172a,#1e293b);
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:22px 30px;
+}
+.top h1{font-size:30px;margin:0 0 8px;font-weight:900;letter-spacing:.02em}
+.top p{margin:0;color:#cbd5e1;font-weight:600}
+.legend{font-size:15px;white-space:nowrap;color:#e5e7eb}
+.dot{display:inline-block;width:13px;height:13px;border-radius:50%;margin:0 6px 0 14px;border:2px solid rgba(255,255,255,.9);vertical-align:-1px}
+.blue{background:var(--blue)} .red{background:var(--red)} .orange{background:var(--orange)}
+.layout{
+  display:grid;
+  grid-template-columns:420px minmax(0,1fr);
+  height:calc(100vh - 112px);
+  min-height:560px;
+}
+.side{
+  background:#f8fafc;
+  border-right:1px solid var(--line);
+  padding:18px;
+  overflow:auto;
+  z-index:1000;
+}
+#map{
+  width:100%;
+  height:100%;
+  min-height:560px;
+  background:#dbeafe;
+}
+.card{
+  background:white;
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:18px;
+  margin-bottom:16px;
+  box-shadow:0 12px 30px rgba(15,23,42,.06);
+}
+.card h2{font-size:18px;margin:0 0 16px;font-weight:900}
+.row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 2px;
+  border-bottom:1px solid #eef2f7;
+  font-size:18px;
+  font-weight:700;
+}
+.row:last-child{border-bottom:0}
+.row input{width:18px;height:18px;accent-color:#2563eb}
+.marker-sample{
+  width:18px;height:18px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.95);
+  box-shadow:0 2px 8px rgba(0,0,0,.25);
+  flex:none;
+}
+.buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+button{
+  border:1px solid var(--line);
+  background:white;
+  border-radius:14px;
+  padding:13px 12px;
+  font-weight:900;
+  cursor:pointer;
+  font-size:15px;
+}
+button:hover{background:#f1f5f9}
+.count{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  background:#f8fafc;
+  border:1px solid #edf2f7;
+  border-radius:14px;
+  padding:12px 14px;
+  margin:10px 0;
+}
+.count span:first-child{font-size:15px;color:#334155;font-weight:700}
+.count span:last-child{font-size:24px;font-weight:950}
+.search{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:13px 14px;
+  font-size:16px;
+  margin:4px 0 12px;
+}
+.note{
+  font-size:13px;
+  line-height:1.75;
+  color:#64748b;
+  margin:10px 0 0;
+}
+.warn{
+  background:#fff7ed;
+  border:1px solid #fed7aa;
+  color:#9a3412;
+  border-radius:14px;
+  padding:12px 14px;
+  font-size:13px;
+  line-height:1.7;
+}
+.leaflet-container{font:inherit}
+.leaflet-popup-content{font-size:14px;line-height:1.7}
+.popup-title{font-size:16px;font-weight:900;margin-bottom:4px}
+.popup-meta{color:#475569}
+@media(max-width:900px){
+  .top{height:auto;align-items:flex-start;gap:12px;padding:18px;flex-direction:column}
+  .top h1{font-size:24px}
+  .layout{grid-template-columns:1fr;height:auto}
+  .side{border-right:0;border-bottom:1px solid var(--line)}
+  #map{height:65vh;min-height:440px}
+}
+</style>
 </head>
 <body>
-  <header>
+<header class="top">
+  <div>
     <h1>下諏訪町 防火水槽・消火栓マップ</h1>
     <p>防火水槽・地下式消火栓・地上式消火栓の位置を地図上で確認できます。</p>
-  </header>
+  </div>
+  <div class="legend">
+    <span class="dot blue"></span>防火水槽
+    <span class="dot red"></span>地下式消火栓
+    <span class="dot orange"></span>地上式消火栓
+  </div>
+</header>
 
-  <aside>
-    <section class="panel">
+<main class="layout">
+  <aside class="side">
+    <section class="card">
       <h2>表示切替</h2>
-      <label class="filter-row"><input type="checkbox" id="toggle-tanks" checked><span class="dot blue"></span><span>防火水槽</span></label>
-      <label class="filter-row"><input type="checkbox" id="toggle-underground" checked><span class="dot red"></span><span>地下式消火栓</span></label>
-      <label class="filter-row"><input type="checkbox" id="toggle-ground" checked><span class="dot orange"></span><span>地上式消火栓</span></label>
-      <div class="actions"><button type="button" id="show-all">すべて表示</button><button type="button" id="hide-all">すべて非表示</button></div>
-    </section>
-
-    <section class="panel">
-      <h2>件数</h2>
-      <div class="count-grid">
-        <div class="count-card"><span>防火水槽</span><strong id="count-tanks">-</strong></div>
-        <div class="count-card"><span>地下式消火栓</span><strong id="count-underground">-</strong></div>
-        <div class="count-card"><span>地上式消火栓</span><strong id="count-ground">-</strong></div>
-        <div class="count-card"><span>表示中 合計</span><strong id="count-visible">-</strong></div>
+      <label class="row"><input type="checkbox" id="chk-tank" checked><span class="marker-sample" style="background:var(--blue)"></span>防火水槽</label>
+      <label class="row"><input type="checkbox" id="chk-underground" checked><span class="marker-sample" style="background:var(--red)"></span>地下式消火栓</label>
+      <label class="row"><input type="checkbox" id="chk-ground" checked><span class="marker-sample" style="background:var(--orange)"></span>地上式消火栓</label>
+      <div class="buttons">
+        <button id="showAll">すべて表示</button>
+        <button id="hideAll">すべて非表示</button>
       </div>
     </section>
 
-    <section class="panel">
-      <h2>凡例</h2>
-      <p class="note">青：防火水槽<br>赤：地下式消火栓<br>オレンジ：地上式消火栓<br><br>マーカーをクリックすると、種別・番号・緯度経度を確認できます。</p>
+    <section class="card">
+      <h2>検索</h2>
+      <input id="search" class="search" placeholder="番号・種別で検索 例：防火水槽 / 12" />
+      <p class="note">番号、種別、住所などに含まれる文字で絞り込みます。</p>
+    </section>
+
+    <section class="card">
+      <h2>件数</h2>
+      <div class="count"><span>防火水槽</span><span id="count-tank">0</span></div>
+      <div class="count"><span>地下式消火栓</span><span id="count-underground">0</span></div>
+      <div class="count"><span>地上式消火栓</span><span id="count-ground">0</span></div>
+      <div class="count"><span>表示中 合計</span><span id="count-total">0</span></div>
+    </section>
+
+    <section class="card">
+      <h2>座標について</h2>
+      <div class="warn">
+        下諏訪町GIS由来の緯度経度は、そのままLeaflet/OpenStreetMapへ重ねると位置がずれるため、
+        日本測地系からWGS84相当へ補正して表示しています。
+      </div>
     </section>
   </aside>
 
   <div id="map"></div>
-  <div id="status" class="status">地図を読み込み中...</div>
+</main>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-  <script>
-    const DATASETS = {
-      tanks: { label: "防火水槽", color: "#2563eb", file: "./GIS/shimosuwa_fire_water_tanks.json", checkboxId: "toggle-tanks", countId: "count-tanks", group: null, total: 0 },
-      underground: { label: "地下式消火栓", color: "#dc2626", file: "./GIS/shimosuwa_underground_hydrants.json", checkboxId: "toggle-underground", countId: "count-underground", group: null, total: 0 },
-      ground: { label: "地上式消火栓", color: "#f97316", file: "./GIS/shimosuwa_ground_hydrants.json", checkboxId: "toggle-ground", countId: "count-ground", group: null, total: 0 }
-    };
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script>
+const DATASETS = [
+  {
+    key:'tank',
+    label:'防火水槽',
+    file:'./GIS/shimosuwa_fire_water_tanks.json',
+    color:'#2563eb',
+    checkId:'chk-tank',
+    countId:'count-tank',
+    numberKeys:['tank_no','no','No','id','uid']
+  },
+  {
+    key:'underground',
+    label:'地下式消火栓',
+    file:'./GIS/shimosuwa_underground_hydrants.json',
+    color:'#dc2626',
+    checkId:'chk-underground',
+    countId:'count-underground',
+    numberKeys:['hydrant_no','no','No','id','uid']
+  },
+  {
+    key:'ground',
+    label:'地上式消火栓',
+    file:'./GIS/shimosuwa_ground_hydrants.json',
+    color:'#f97316',
+    checkId:'chk-ground',
+    countId:'count-ground',
+    numberKeys:['hydrant_no','no','No','id','uid']
+  }
+];
 
-    let map;
-    let allBounds = [];
-    const statusEl = document.getElementById("status");
+let map;
+let allItems = [];
+let layers = {};
 
-    function escapeHtml(value) {
-      return String(value ?? "")
-        .replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;").replaceAll("'", "&#039;");
-    }
+// 下諏訪町GISの点データをLeaflet/OSM上へ合わせるための補正。
+// バス停ビューアで使った「日本測地系→WGS84補正」と同じ考え方。
+function tokyoDatumToWgs84(lat, lon){
+  const latNum = Number(lat);
+  const lonNum = Number(lon);
+  return {
+    lat: latNum - latNum * 0.00010695 + lonNum * 0.000017464 + 0.0046017,
+    lon: lonNum - latNum * 0.000046038 - lonNum * 0.000083043 + 0.010040
+  };
+}
 
-    function getLatLng(item) {
-      const lat = Number(item.latitude ?? item.center_latitude);
-      const lng = Number(item.longitude ?? item.center_longitude);
-      return Number.isFinite(lat) && Number.isFinite(lng) ? [lat, lng] : null;
-    }
+function getLatLon(row){
+  const rawLat = row.latitude ?? row.center_latitude ?? row.lat;
+  const rawLon = row.longitude ?? row.center_longitude ?? row.lon ?? row.lng;
+  if(rawLat === undefined || rawLon === undefined) return null;
+  const lat = Number(rawLat), lon = Number(rawLon);
+  if(!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+  const corrected = tokyoDatumToWgs84(lat, lon);
+  return {rawLat:lat, rawLon:lon, lat:corrected.lat, lon:corrected.lon};
+}
 
-    function getNo(item) { return item.tank_no || item.hydrant_no || item.no || item.uid || ""; }
+function pickNumber(row, dataset){
+  for(const key of dataset.numberKeys){
+    if(row[key] !== undefined && row[key] !== null && String(row[key]).trim() !== '') return String(row[key]);
+  }
+  return '';
+}
 
-    function makePopup(item, label) {
-      const no = getNo(item);
-      const latlng = getLatLng(item);
-      const address = item.address ? `<div class="popup-line">住所：${escapeHtml(item.address)}</div>` : "";
-      return `<div class="popup-title">${escapeHtml(label)}${no ? " No." + escapeHtml(no) : ""}</div>${address}<div class="popup-line">緯度：${latlng[0].toFixed(6)}</div><div class="popup-line">経度：${latlng[1].toFixed(6)}</div>`;
-    }
+function makeIcon(color){
+  return L.divIcon({
+    className:'',
+    html:`<div style="width:18px;height:18px;border-radius:50%;background:${color};border:2px solid rgba(255,255,255,.96);box-shadow:0 2px 8px rgba(0,0,0,.28)"></div>`,
+    iconSize:[18,18],
+    iconAnchor:[9,9]
+  });
+}
 
-    async function loadDataset(key) {
-      const ds = DATASETS[key];
-      ds.group = L.layerGroup();
-      try {
-        const response = await fetch(ds.file, { cache: "no-store" });
-        if (!response.ok) throw new Error(response.status + " " + response.statusText);
-        const data = await response.json();
-        let count = 0;
-        data.forEach(item => {
-          const latlng = getLatLng(item);
-          if (!latlng) return;
-          count++;
-          allBounds.push(latlng);
-          L.circleMarker(latlng, {
-            radius: 7,
-            color: "#ffffff",
-            weight: 2,
-            fillColor: ds.color,
-            fillOpacity: 0.95
-          }).bindPopup(makePopup(item, ds.label)).addTo(ds.group);
-        });
-        ds.total = count;
-        document.getElementById(ds.countId).textContent = count;
-        ds.group.addTo(map);
-      } catch (e) {
-        console.error("Failed to load", ds.file, e);
-        document.getElementById(ds.countId).textContent = "失敗";
-      }
-    }
+function escapeHtml(value){
+  return String(value ?? '').replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+}
 
-    function updateLayerVisibility() {
-      let visibleTotal = 0;
-      Object.values(DATASETS).forEach(ds => {
-        const checked = document.getElementById(ds.checkboxId).checked;
-        if (!ds.group) return;
-        if (checked) {
-          if (!map.hasLayer(ds.group)) ds.group.addTo(map);
-          visibleTotal += ds.total;
-        } else {
-          if (map.hasLayer(ds.group)) map.removeLayer(ds.group);
-        }
+function popupHtml(item){
+  const no = item.no ? ` No.${escapeHtml(item.no)}` : '';
+  const address = item.row.address ? `<div class="popup-meta">住所：${escapeHtml(item.row.address)}</div>` : '';
+  return `
+    <div class="popup-title">${escapeHtml(item.label)}${no}</div>
+    ${address}
+    <div class="popup-meta">緯度：${item.lat.toFixed(6)} / 経度：${item.lon.toFixed(6)}</div>
+  `;
+}
+
+function searchableText(item){
+  return [
+    item.label,
+    item.no,
+    item.row.category,
+    item.row.layer_name,
+    item.row.address,
+    item.row.uid
+  ].filter(Boolean).join(' ').toLowerCase();
+}
+
+async function loadJson(file){
+  const res = await fetch(file, {cache:'no-store'});
+  if(!res.ok) throw new Error(`${file} を読み込めませんでした。`);
+  return await res.json();
+}
+
+async function init(){
+  map = L.map('map', {zoomControl:true}).setView([36.075,138.092],14);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom:19,
+    attribution:'&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  for(const ds of DATASETS){
+    layers[ds.key] = L.layerGroup().addTo(map);
+    const rows = await loadJson(ds.file);
+    for(const row of rows){
+      const pos = getLatLon(row);
+      if(!pos) continue;
+      allItems.push({
+        key:ds.key,
+        label:ds.label,
+        color:ds.color,
+        no:pickNumber(row, ds),
+        row,
+        rawLat:pos.rawLat,
+        rawLon:pos.rawLon,
+        lat:pos.lat,
+        lon:pos.lon
       });
-      document.getElementById("count-visible").textContent = visibleTotal;
     }
+  }
 
-    function fitMap() {
-      map.invalidateSize(true);
-      if (allBounds.length) {
-        map.fitBounds(L.latLngBounds(allBounds), { padding: [36, 36], maxZoom: 15 });
-      } else {
-        map.setView([36.075, 138.085], 14);
-      }
+  bindEvents();
+  render();
+  setTimeout(()=>map.invalidateSize(), 100);
+  setTimeout(()=>fitVisible(), 200);
+}
+
+function render(){
+  Object.values(layers).forEach(layer => layer.clearLayers());
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  const visibleItems = [];
+
+  for(const ds of DATASETS){
+    const checked = document.getElementById(ds.checkId).checked;
+    const items = allItems.filter(item => item.key === ds.key);
+    document.getElementById(ds.countId).textContent = items.length;
+
+    if(!checked) continue;
+
+    for(const item of items){
+      if(q && !searchableText(item).includes(q)) continue;
+      const marker = L.marker([item.lat, item.lon], {icon:makeIcon(item.color)})
+        .bindTooltip(`${item.label}${item.no ? ' No.' + item.no : ''}`)
+        .bindPopup(popupHtml(item));
+      marker.addTo(layers[item.key]);
+      visibleItems.push(item);
     }
+  }
 
-    function setAll(checked) {
-      Object.values(DATASETS).forEach(ds => document.getElementById(ds.checkboxId).checked = checked);
-      updateLayerVisibility();
-    }
+  document.getElementById('count-total').textContent = visibleItems.length;
+}
 
-    async function initMap() {
-      map = L.map("map", { preferCanvas: true, zoomControl: true, attributionControl: true });
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 19,
-        attribution: "&copy; OpenStreetMap contributors"
-      }).addTo(map);
-      map.setView([36.075, 138.085], 14);
+function fitVisible(){
+  const points = [];
+  Object.values(layers).forEach(layer => {
+    layer.eachLayer(marker => points.push(marker.getLatLng()));
+  });
+  if(points.length){
+    map.fitBounds(L.latLngBounds(points).pad(0.08), {padding:[20,20]});
+  }else{
+    map.setView([36.075,138.092],14);
+  }
+}
 
-      await Promise.all(Object.keys(DATASETS).map(loadDataset));
-      updateLayerVisibility();
-      fitMap();
-      setTimeout(fitMap, 200);
-      setTimeout(fitMap, 800);
-      statusEl.classList.add("hidden");
-
-      Object.values(DATASETS).forEach(ds => document.getElementById(ds.checkboxId).addEventListener("change", updateLayerVisibility));
-      document.getElementById("show-all").addEventListener("click", () => setAll(true));
-      document.getElementById("hide-all").addEventListener("click", () => setAll(false));
-      window.addEventListener("resize", () => setTimeout(fitMap, 100));
-      if (window.ResizeObserver) new ResizeObserver(() => setTimeout(fitMap, 50)).observe(document.getElementById("map"));
-    }
-
-    window.addEventListener("load", () => {
-      requestAnimationFrame(() => requestAnimationFrame(initMap));
+function bindEvents(){
+  DATASETS.forEach(ds => {
+    document.getElementById(ds.checkId).addEventListener('change', () => {
+      render();
+      fitVisible();
     });
-  </script>
+  });
+  document.getElementById('search').addEventListener('input', () => {
+    render();
+    fitVisible();
+  });
+  document.getElementById('showAll').addEventListener('click', () => {
+    DATASETS.forEach(ds => document.getElementById(ds.checkId).checked = true);
+    render();
+    fitVisible();
+  });
+  document.getElementById('hideAll').addEventListener('click', () => {
+    DATASETS.forEach(ds => document.getElementById(ds.checkId).checked = false);
+    render();
+  });
+  window.addEventListener('resize', () => map.invalidateSize());
+}
+
+init().catch(err => {
+  console.error(err);
+  document.querySelector('.side').insertAdjacentHTML('afterbegin',
+    `<section class="card"><div class="warn">${escapeHtml(err.message)}</div></section>`);
+});
+</script>
 </body>
 </html>
