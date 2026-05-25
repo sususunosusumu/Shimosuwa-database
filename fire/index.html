@@ -328,6 +328,7 @@ async function init(){
   bindEvents();
   render();
   setTimeout(()=>map.invalidateSize(), 100);
+  // 初回読み込み時だけ、全ポイントが見える範囲に合わせる。
   setTimeout(()=>fitVisible(), 200);
 }
 
@@ -371,22 +372,33 @@ function fitVisible(){
 function bindEvents(){
   DATASETS.forEach(ds => {
     document.getElementById(ds.checkId).addEventListener('change', () => {
+      // 表示切替では、現在見ている地図の位置・ズームを維持する。
+      const center = map.getCenter();
+      const zoom = map.getZoom();
       render();
-      fitVisible();
+      map.setView(center, zoom, {animate:false});
     });
   });
   document.getElementById('search').addEventListener('input', () => {
+    // 検索中も、勝手に地図位置を戻さない。
+    const center = map.getCenter();
+    const zoom = map.getZoom();
     render();
-    fitVisible();
+    map.setView(center, zoom, {animate:false});
   });
   document.getElementById('showAll').addEventListener('click', () => {
+    const center = map.getCenter();
+    const zoom = map.getZoom();
     DATASETS.forEach(ds => document.getElementById(ds.checkId).checked = true);
     render();
-    fitVisible();
+    map.setView(center, zoom, {animate:false});
   });
   document.getElementById('hideAll').addEventListener('click', () => {
+    const center = map.getCenter();
+    const zoom = map.getZoom();
     DATASETS.forEach(ds => document.getElementById(ds.checkId).checked = false);
     render();
+    map.setView(center, zoom, {animate:false});
   });
   window.addEventListener('resize', () => map.invalidateSize());
 }
